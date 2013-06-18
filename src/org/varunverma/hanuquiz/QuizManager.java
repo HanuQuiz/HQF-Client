@@ -1,0 +1,111 @@
+package org.varunverma.hanuquiz;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+
+import android.util.Log;
+
+public class QuizManager {
+
+	private static QuizManager instance;
+	
+	private HashMap<Integer, Quiz> quizList;
+	List<Integer> toDownload;
+	ArrayList<Quiz> toSave;
+	
+	static QuizManager getInstance(){
+		
+		if(instance == null){
+			
+			instance = new QuizManager();
+			
+		}
+		
+		return instance;
+	}
+	
+	private QuizManager(){
+		
+		quizList = new HashMap<Integer,Quiz>();
+		toDownload = new ArrayList<Integer>();
+		toSave = new ArrayList<Quiz>();
+		
+	}
+	
+	void clearQuizList(){
+		quizList.clear();
+	}
+	
+	void filterArtifactsForDownload(HashMap<Integer, Date> artifactsList){
+		
+		toDownload.clear();
+		
+		Iterator<Integer> i = artifactsList.keySet().iterator();
+		String quizIds = "";
+		
+		if(i.hasNext()){
+			quizIds = String.valueOf(i.next());
+		}
+		
+		while(i.hasNext()){
+			quizIds += "," + String.valueOf(i.next());
+		}
+		
+		HashMap<Integer, Date> dbArtifacts = ApplicationDB.getInstance().getQuizArtifacts(quizIds);
+		
+		Entry<Integer,Date> set;
+		Date dbDate, date;
+		
+		Iterator<Entry<Integer,Date>> iterator = artifactsList.entrySet().iterator();
+		
+		while(iterator.hasNext()){
+			
+			set = iterator.next();
+			date = set.getValue();
+			dbDate = dbArtifacts.get(set.getKey());
+			
+			if(date.compareTo(dbDate) > 0){
+				// DB entry is older. So we must update this.
+				toDownload.add(set.getKey());
+			}
+			
+		}
+		
+	}
+
+	boolean saveQuizToDB() {
+		
+		Iterator<Quiz> i = toSave.iterator();
+		boolean allSuccess = true;
+		
+		while(i.hasNext()){
+			
+			try {
+				// Save to DB
+				i.next().saveToDB();
+				
+			} catch (Exception e) {
+				allSuccess = false;
+				Log.w(Application.TAG, e.getMessage());
+			}
+			
+		}
+		
+		return allSuccess;
+		
+	}
+
+	List<Quiz> getQuizList() {
+		
+		ArrayList<Quiz> list = new ArrayList<Quiz>();
+		list.addAll(quizList.values());
+		
+		return list;
+		
+	}
+	
+}
