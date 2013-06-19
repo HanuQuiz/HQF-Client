@@ -14,6 +14,11 @@ public class Quiz {
 		questionsList = new ArrayList<Question>();
 	}
 	
+	@Override
+	public String toString(){
+		return String.valueOf(quizId);
+	}
+	
 	/**
 	 * @return the quizId
 	 */
