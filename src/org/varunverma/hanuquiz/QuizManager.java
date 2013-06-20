@@ -17,7 +17,7 @@ public class QuizManager {
 	List<Integer> toDownload;
 	ArrayList<Quiz> toSave;
 	
-	static QuizManager getInstance(){
+	public static QuizManager getInstance(){
 		
 		if(instance == null){
 			
@@ -38,6 +38,14 @@ public class QuizManager {
 	
 	void clearQuizList(){
 		quizList.clear();
+	}
+	
+	void addQuizToList(Quiz quiz){
+		quizList.put(quiz.getQuizId(), quiz);
+	}
+	
+	public Quiz getQuizById(int id){
+		return quizList.get(id);
 	}
 	
 	void filterArtifactsForDownload(HashMap<Integer, Date> artifactsList){

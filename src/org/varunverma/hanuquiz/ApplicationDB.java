@@ -155,7 +155,11 @@ public class ApplicationDB extends SQLiteOpenHelper{
 	}
 	
 	synchronized void loadQuizListByLevel(int level) {
-		// TODO Pramodh - Load Quiz List by Level
+		/*
+		 * TODO Pramodh - Load Quiz List by Level
+		 * populate them in the QuizManager.quizList
+		 * Populate via method: addQuizToList
+		 */
 		
 	}
 	

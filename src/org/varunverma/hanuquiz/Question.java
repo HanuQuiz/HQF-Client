@@ -124,5 +124,22 @@ public class Question {
 		 */
 		
 	}
+
+	public String getHTML() {
+		
+		String html = "";
+		
+		// Dummy HTML for testing
+		html = "<html><body>" +
+				"This is the question." +
+				"Select the correct Answer." +
+				"</body></html>";
+		
+		/*
+		 * TODO Pramodh - to build html from question data
+		 */
+		
+		return html;
+	}
 	
 }

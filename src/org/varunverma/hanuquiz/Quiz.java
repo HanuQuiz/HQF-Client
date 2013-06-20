@@ -6,8 +6,8 @@ import java.util.List;
 public class Quiz {
 
 	private int quizId, level;
-	private List<Integer> questions;
-	private List<Question> questionsList;
+	private List<Integer> questions;		// List of Question Ids
+	private List<Question> questionsList;	// List of Questions
 	
 	Quiz(){
 		questions = new ArrayList<Integer>();
@@ -46,13 +46,13 @@ public class Quiz {
 	/**
 	 * @return the count
 	 */
-	public int getCount() {
+	public int getCount() {	
 		return questions.size();
 	}
 	/**
 	 * @return the questions
 	 */
-	public List<Question> getQuestions() {
+	private List<Question> getQuestions() {
 		
 		if(!questions.isEmpty() && questionsList.isEmpty()){
 
@@ -73,6 +73,16 @@ public class Quiz {
 	 */
 	void addQuestion(int questionId) {
 		questions.add(questionId);
+	}
+	
+	public Question getQuestion(int pos){
+		
+		if(questionsList.isEmpty()){
+			getQuestions();
+		}
+		
+		return questionsList.get(pos);
+		
 	}
 	
 	void saveToDB() {
