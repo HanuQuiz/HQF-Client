@@ -12,8 +12,8 @@ public class QuestionManager {
 
 	private static QuestionManager instance;
 	
-	ArrayList<Integer> downloadList;
-	ArrayList<Question> downloadQuestionList;
+	ArrayList<Integer> toDownload;
+	ArrayList<Question> toSave;
 	
 	static QuestionManager getInstance(){
 		
@@ -25,15 +25,15 @@ public class QuestionManager {
 	}
 	
 	private QuestionManager(){
-		downloadList = new ArrayList<Integer>();
-		downloadQuestionList = new ArrayList<Question>();
+		toDownload = new ArrayList<Integer>();
+		toSave = new ArrayList<Question>();
 	}
 	
 	void filterArtifactsForDownload(HashMap<Integer, Date> artifactsList) {
 		/*
 		 * Load Artifacts from DB
 		 */
-		downloadList.clear();
+		toDownload.clear();
 		
 		Iterator<Integer> i = artifactsList.keySet().iterator();
 		String questionIds = "";
@@ -61,7 +61,7 @@ public class QuestionManager {
 			
 			if(date.compareTo(dbDate) > 0){
 				// DB entry is older. So we must update this.
-				downloadList.add(set.getKey());
+				toDownload.add(set.getKey());
 			}
 			
 		}
@@ -70,7 +70,7 @@ public class QuestionManager {
 
 	boolean saveQuestionsToDB() {
 		
-		Iterator<Question> i = downloadQuestionList.iterator();
+		Iterator<Question> i = toSave.iterator();
 		boolean allSuccess = true;
 		
 		while(i.hasNext()){

@@ -45,7 +45,7 @@ public class DownloadQuestionsCommand extends Command {
 		
 		qm = QuestionManager.getInstance();
 		
-		Iterator<Integer> iterator = qm.downloadList.listIterator();
+		Iterator<Integer> iterator = qm.toDownload.listIterator();
 		
 		/*
 		 * Right now, we are going to download all questions together...
@@ -94,7 +94,7 @@ public class DownloadQuestionsCommand extends Command {
 		// Parse the JSON Response
 		JSONArray jsonResponse = new JSONArray(builder.toString());
 		
-		qm.downloadQuestionList.clear();
+		qm.toSave.clear();
 		
 		for(int i=0; i<jsonResponse.length(); i++){
 			
@@ -133,7 +133,7 @@ public class DownloadQuestionsCommand extends Command {
 				
 			}
 			
-			qm.downloadQuestionList.add(q);
+			qm.toSave.add(q);
 			
 		}
 		
@@ -160,7 +160,7 @@ public class DownloadQuestionsCommand extends Command {
 		}
 		
 		// Prepare result
-		result.getData().putInt("QuestionsDownloaded", qm.downloadList.size());
+		result.getData().putInt("QuestionsDownloaded", qm.toDownload.size());
 		result.getData().putBoolean("ShowNotification", true);
 
 	}

@@ -53,7 +53,7 @@ public class LoadQuestionsFromFileCommand extends Command {
 			// Parse the JSON Response
 			JSONArray jsonResponse = new JSONArray(builder.toString());
 			
-			qm.downloadQuestionList.clear();
+			qm.toSave.clear();
 			
 			for(int i=0; i<jsonResponse.length(); i++){
 				
@@ -92,7 +92,7 @@ public class LoadQuestionsFromFileCommand extends Command {
 					
 				}
 				
-				qm.downloadQuestionList.add(q);
+				qm.toSave.add(q);
 				
 			}
 
