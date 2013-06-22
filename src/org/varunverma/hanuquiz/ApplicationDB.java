@@ -68,9 +68,41 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		 * Note: Use constants as table names
 		 */
 		
+		String createQuestionsTable = "CREATE VIRTUAL TABLE " + QuestionsTable + "  USING fts3(" + //Questions table - FTS4 Virtual Table
+		        "Id INT, " +					//Question Id
+				"Question VARCHAR(200), " +		//Question Text
+		        "Level INT, " +					//Level 
+				"Choice INT " +				//Choice
+		        ")";
+		        
+		String createAnswersTable = "CREATE TABLE " + AnswersTable + " (" + 
+				"QuestionId INT, " + 		// Question ID
+				"OptionId INT, " + 			// Option ID
+				")";
+		        
 		String createSettingsTable = "CREATE TABLE " + SettingsTable + " (" + 
 				"ParamName VARCHAR(20), " + 		// Parameter Name
 				"ParamValue VARCHAR(20)" + 			// Parameter Value
+				")";
+		
+		
+		String createOptionsTable = "CREATE TABLE " + OptionsTable + " (" + 
+				"QuestionId INT, " + 		// Question ID
+				"OptionId INT, " + 			// Option ID
+				"OptionValue VARCHAR(20) " + 			// Option Value
+				")";
+		
+		String createQuestionsMetaTable = "CREATE TABLE " + MetaDataTable + " (" + 
+				"QuestionId INT, " + 		// Question ID
+				"MetaKey VARCHAR(20), " + 			// Meta Key
+				"MetaValue VARCHAR(20) " + 			// Meta Value
+				")";
+		
+		String createQuizTable = "CREATE TABLE " + QuizTable + " (" + 
+				"QuizId INT, " + 		// Question ID
+				"Level INT, " + 		// Level
+				"Count INT, " + 		// Count
+				"QuestionIds VARCHAR(100), " + 			// Question IDs seperated by comma
 				")";
 		
 		// create a new table - if not existing
@@ -78,8 +110,18 @@ public class ApplicationDB extends SQLiteOpenHelper{
 			// Create Tables.
 			Log.i(Application.TAG, "Creating Tables for Version:" + String.valueOf(DBVersion));
 			
+			db.beginTransaction();				//Start of LUW
+			
+			db.execSQL(createQuestionsTable);
+			db.execSQL(createAnswersTable);			
+			db.execSQL(createOptionsTable);
+			db.execSQL(createQuestionsMetaTable);
+			db.execSQL(createQuizTable);
 			db.execSQL(createSettingsTable);
-
+			
+			db.close();
+			db.endTransaction();				//End of LUW
+			
 			Log.i(Application.TAG, "Tables created successfully");
 
 		} catch (SQLException e) {
@@ -134,8 +176,8 @@ public class ApplicationDB extends SQLiteOpenHelper{
 			data_base.endTransaction();
 			
 		} catch (Exception e) {
-			
-			data_base.endTransaction();
+
+		data_base.endTransaction();
 			throw e;
 			
 		}
@@ -298,4 +340,44 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		return artifactList;
 	}
 	
+
+
+public void startTransaction()
+{
+	
+this.data_base.beginTransaction();	
+}
+
+public void stopTransaction()
+{
+this.data_base.close();
+this.data_base.endTransaction();
+}
+
+
+public void saveQuestion(int Id, String Question, int level, int choice ){
+
+	String saveQuestion = "INSERT INTO  " + QuestionsTable + " VALUES(" + 
+			"\'" + Id	+ "'"	+		// Question ID	
+			"\'" + Question	+ "\'"	+	// Question Text
+			"\'" + level	+ "\'"	+		// Level
+			"\'" + choice	+ "\'" + 	//Choice
+			");";
+	
+	this.data_base.execSQL( saveQuestion );
+	
+}
+
+public void saveOptions(int QuestionId, int OptionId,String OptionValue){
+
+	String saveOption = "INSERT INTO  " + OptionsTable + " VALUES(" + 
+			"\'" + QuestionId	+ "\'"	+		// Question ID	
+			"\'" + OptionId	+ "\'"	+	// Option Id
+			"\'" + OptionValue	+ "\'"	+		//OPtion Value
+			")";
+	
+	this.data_base.execSQL( saveOption );
+	
+}
+
 }

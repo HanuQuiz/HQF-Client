@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
 public class Question {
 
 	private int id, level, choiceType;
@@ -121,7 +125,30 @@ public class Question {
 		 * If Error occurs during save, then throw Exception
 		 * Remember to maintain the transactional integrity. Either all or none.
 		 * Call DB Method executeDBTransactions - It will ensure either all or none.
-		 */
+		 */		
+		
+		try {
+		
+		ApplicationDB Appdb = ApplicationDB.getInstance();
+		Appdb.startTransaction();
+		
+		Appdb.saveQuestion(id, question, level, choiceType);	
+		
+		/*
+		while (options.hasNext()) {
+			options entry = (options) options.next();
+		    Integer Id = (Integer)entry.getKey();
+		    Integer text = (Integer)entry.getValue();
+		    Appdb.saveOptions(id, OptionId, OptionValue)
+		}
+		
+		
+		*/
+		
+		
+		}catch(SQLException e) {
+			Log.e(Application.TAG, e.getMessage(), e);
+	}
 		
 	}
 
