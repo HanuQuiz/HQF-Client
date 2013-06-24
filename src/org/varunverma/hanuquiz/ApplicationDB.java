@@ -77,7 +77,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		        
 		String createAnswersTable = "CREATE TABLE " + AnswersTable + " (" + 
 				"QuestionId INT, " + 		// Question ID
-				"OptionId INT, " + 			// Option ID
+				"OptionId INT " + 			// Option ID
 				")";
 		        
 		String createSettingsTable = "CREATE TABLE " + SettingsTable + " (" + 
@@ -102,7 +102,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 				"QuizId INT, " + 		// Question ID
 				"Level INT, " + 		// Level
 				"Count INT, " + 		// Count
-				"QuestionIds VARCHAR(100), " + 			// Question IDs seperated by comma
+				"QuestionIds VARCHAR(100) " + 			// Question IDs seperated by comma
 				")";
 		
 		// create a new table - if not existing
@@ -119,7 +119,6 @@ public class ApplicationDB extends SQLiteOpenHelper{
 			db.execSQL(createQuizTable);
 			db.execSQL(createSettingsTable);
 			
-			db.close();
 			db.endTransaction();				//End of LUW
 			
 			Log.i(Application.TAG, "Tables created successfully");
@@ -355,7 +354,7 @@ this.data_base.endTransaction();
 }
 
 
-public void saveQuestion(int Id, String Question, int level, int choice ){
+public void saveQuestion(int Id, String Question, int level, int choice )  throws Exception{
 
 	String saveQuestion = "INSERT INTO  " + QuestionsTable + " VALUES(" + 
 			"\'" + Id	+ "'"	+		// Question ID	
@@ -377,6 +376,29 @@ public void saveOptions(int QuestionId, int OptionId,String OptionValue){
 			")";
 	
 	this.data_base.execSQL( saveOption );
+	
+}
+
+public void saveAnswers(int QuestionId, int AnswerId){
+
+	String saveAnswer = "INSERT INTO  " + AnswersTable + " VALUES(" + 
+			"\'" + QuestionId	+ "\'"	+		// Question ID	
+			"\'" + AnswerId	+ "\'"	+	// Answer Id - Option Id
+			")";
+	
+	this.data_base.execSQL( saveAnswer );
+	
+}
+
+public void saveMetaData(int QuestionId, String tag){
+
+	String saveAnswer = "INSERT INTO  " + MetaDataTable + " VALUES(" + 
+			"\'" + QuestionId	+ "\'"	+		// Question ID	
+			"\'" + "tag"	+ "\'"	+		// MetaKey = tag
+			"\'" + tag	+ "\'"	+	//MetaValue = tag inputted
+			")";
+	
+	this.data_base.execSQL( saveAnswer );
 	
 }
 
