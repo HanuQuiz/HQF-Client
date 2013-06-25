@@ -68,7 +68,7 @@ public class FetchArtifactsCommand extends Command {
 			
 		}
 		
-		if(!justSynced){
+		if(justSynced){
 			throw new Exception("Last sync done less than 5 min ago...");
 		}
 		

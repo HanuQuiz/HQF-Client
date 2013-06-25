@@ -45,6 +45,10 @@ public class DownloadQuestionsCommand extends Command {
 		
 		qm = QuestionManager.getInstance();
 		
+		if(qm.toDownload.isEmpty()){
+			return;
+		}
+		
 		Iterator<Integer> iterator = qm.toDownload.listIterator();
 		
 		/*
@@ -111,6 +115,7 @@ public class DownloadQuestionsCommand extends Command {
 			q.setLevel(question.getInt("Level"));
 			q.setChoiceType(question.getInt("ChoiceType"));
 			q.setQuestion(question.getString("Question"));
+			q.setCreatedAt(question.getString("CreatedAt"));
 			
 			for(int j=0; j<options.length(); j++){
 				

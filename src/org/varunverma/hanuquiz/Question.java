@@ -6,14 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.content.ContentValues;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 public class Question {
 
 	private int id, level, choiceType;
-	private String question;
+	private String question, createdAt;
 	private HashMap<Integer,String> options;
 	private List<Integer> answers;
 	private List<String> tags;
@@ -80,6 +77,15 @@ public class Question {
 	void setQuestion(String question) {
 		this.question = question;
 	}
+	
+	public String getCreatedAt() {
+		return createdAt;
+	}
+
+	void setCreatedAt(String createdAt) {
+		this.createdAt = createdAt;
+	}
+
 	/**
 	 * @return the options
 	 */
@@ -129,83 +135,88 @@ public class Question {
 		 */		
 			
 		ApplicationDB Appdb = ApplicationDB.getInstance();
-		
+
 		// -- Save Question Table --
 		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
 		DBContentValues QuestionData = new DBContentValues();
-		
+
 		QuestionData.TableName = ApplicationDB.QuestionsTable;
 		QuestionData.Content = new ContentValues();
-		QuestionData.Content.put("Id", id);
+		QuestionData.Content.put("ID", id);
 		QuestionData.Content.put("Question", question);
 		QuestionData.Content.put("Level", level);
 		QuestionData.Content.put("Choice", choiceType);
+		QuestionData.Content.put("CreatedAt", createdAt);
 		QuestionData.dbOperation = DBContentValues.DBOperation.INSERT;
 		transactionData.add(QuestionData);
-		
-		// -- Save Options Table  --
-		DBContentValues OptionsData = new DBContentValues();
-		Iterator iter_options = options.keySet().iterator();
-		
-		OptionsData.TableName = ApplicationDB.OptionsTable;
-		OptionsData.Content = new ContentValues();
-		
-		 while(iter_options.hasNext()) 
-		 	{
-			 Integer option_id = (Integer)iter_options.next();
-			 String option_value = (String)options.get(option_id);
-			 
-			 OptionsData.Content.put("QuestionId", id);
-			 OptionsData.Content.put("OptionId", option_id);
-			 OptionsData.Content.put("OptionValue", option_value);
-			 }
 
-		 OptionsData.dbOperation = DBContentValues.DBOperation.INSERT;
-		 transactionData.add(OptionsData);	
-		
+		// -- Save Options Table --
+		Iterator iter_options = options.keySet().iterator();
+
+		while (iter_options.hasNext()) {
+			
+			DBContentValues OptionsData = new DBContentValues();
+			OptionsData.TableName = ApplicationDB.OptionsTable;
+			OptionsData.Content = new ContentValues();
+
+			Integer option_id = (Integer) iter_options.next();
+			String option_value = (String) options.get(option_id);
+
+			OptionsData.Content.put("QuestionId", id);
+			OptionsData.Content.put("OptionId", option_id);
+			OptionsData.Content.put("OptionValue", option_value);
+
+			OptionsData.dbOperation = DBContentValues.DBOperation.INSERT;
+			transactionData.add(OptionsData);
+		}
+
 		// -- Save Answers Table --
-		DBContentValues AnswersData = new DBContentValues();
-		AnswersData.TableName = ApplicationDB.AnswersTable;
-		AnswersData.Content = new ContentValues();
-		Iterator iter_ans  = answers.iterator();
-				
-		while(iter_ans.hasNext()) 
-		{
-			 Integer answer_id = (Integer)iter_ans.next();
-			 AnswersData.Content.put("QuestionId", id);
-			 AnswersData.Content.put("OptionId", answer_id);
-		 }
-		
-		 AnswersData.dbOperation = DBContentValues.DBOperation.INSERT;
-		transactionData.add(AnswersData);	
-			 
+		Iterator iter_ans = answers.iterator();
+
+		while (iter_ans.hasNext()) {
+			
+			DBContentValues AnswersData = new DBContentValues();
+			AnswersData.TableName = ApplicationDB.AnswersTable;
+			AnswersData.Content = new ContentValues();
+			
+			Integer answer_id = (Integer) iter_ans.next();
+			AnswersData.Content.put("QuestionId", id);
+			AnswersData.Content.put("OptionId", answer_id);
+			
+			AnswersData.dbOperation = DBContentValues.DBOperation.INSERT;
+			transactionData.add(AnswersData);
+		}
+
 		// -- Save Tags (Metadata) --
-		DBContentValues MetaData = new DBContentValues();
-		MetaData.TableName = ApplicationDB.MetaDataTable;
-		MetaData.Content = new ContentValues();
-		Iterator iter_tag = tags.iterator();
-			 
-		while(iter_tag.hasNext()) 
-		{
-			 String tag = (String)iter_tag.next();
-			 AnswersData.Content.put("QuestionId", id);
-			 AnswersData.Content.put("MetaKey", "tag");
-			 AnswersData.Content.put("MetaValue", tag);
-		 }
 		
-		transactionData.add(AnswersData);	
-			 
+		Iterator iter_tag = tags.iterator();
+
+		while (iter_tag.hasNext()) {
+			
+			DBContentValues MetaData = new DBContentValues();
+			MetaData.TableName = ApplicationDB.MetaDataTable;
+			MetaData.Content = new ContentValues();
+			
+			String tag = (String) iter_tag.next();
+			MetaData.Content.put("QuestionId", id);
+			MetaData.Content.put("MetaKey", "tag");
+			MetaData.Content.put("MetaValue", tag);
+			
+			MetaData.dbOperation = DBContentValues.DBOperation.INSERT;
+			transactionData.add(MetaData);
+			
+		}
+
 		boolean success;
 		try {
-			
+
 			Appdb.executeDBTransaction(transactionData);
 			success = true;
-			
+
 		} catch (Exception e) {
 			success = false;
 			throw e;
 		}
-		
 				
 	}
 

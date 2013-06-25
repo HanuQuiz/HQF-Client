@@ -45,6 +45,10 @@ public class DownloadQuizCommand extends Command {
 		
 		qm = QuizManager.getInstance();
 		
+		if(qm.toDownload.isEmpty()){
+			return;
+		}
+		
 		Iterator<Integer> iterator = qm.toDownload.listIterator();
 		
 		/*
@@ -104,6 +108,7 @@ public class DownloadQuizCommand extends Command {
 			
 			q.setQuizId(quizData.getInt("QuizId"));
 			q.setLevel(quizData.getInt("Level"));
+			q.setCreatedAt(quizData.getString("CreatedAt"));
 
 			String questions = quizData.getString("QuestionIds");
 			String[] questionList = questions.split(",");

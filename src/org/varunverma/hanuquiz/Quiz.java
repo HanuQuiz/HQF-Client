@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import android.content.ContentValues;
+
 public class Quiz {
 
 	private int quizId, level;
+	private String createdAt;
 	private List<Integer> questions;		// List of Question Ids
 	private List<Question> questionsList;	// List of Questions
 	
@@ -44,6 +47,20 @@ public class Quiz {
 	void setLevel(int level) {
 		this.level = level;
 	}
+	/**
+	 * @return the createdAt
+	 */
+	public String getCreatedAt() {
+		return createdAt;
+	}
+
+	/**
+	 * @param createdAt the createdAt to set
+	 */
+	void setCreatedAt(String createdAt) {
+		this.createdAt = createdAt;
+	}
+
 	/**
 	 * @return the count
 	 */
@@ -110,19 +127,22 @@ public class Quiz {
 		DBContentValues QuizData = new DBContentValues();
 		
 		QuizData.TableName = ApplicationDB.QuizTable;
-		//QuizData.Content = new ContentValues();	
-		QuizData.Content.put("QuizId", quizId);
+		QuizData.Content = new ContentValues();
+		QuizData.Content.put("ID", quizId);
 		QuizData.Content.put("Count", questions.size());
 		QuizData.Content.put("Level", level);
+		QuizData.Content.put("CreatedAt", createdAt);
 		
 		Iterator Iter;
 		Iter = questions.iterator();
 		String questionids = "";
 		
+		if(Iter.hasNext()){
+			questionids = String.valueOf(Iter.next());
+		}
 		while(Iter.hasNext()) 
 		{
-			 Question quest = (Question)Iter.next();			 
-			 questionids = questionids + "," + quest.getId();
+			 questionids = questionids + "," + String.valueOf(Iter.next());
 		 }
 		
 		QuizData.Content.put("QuestionIds", questionids);

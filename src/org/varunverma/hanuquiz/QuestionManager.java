@@ -59,7 +59,7 @@ public class QuestionManager {
 			date = set.getValue();
 			dbDate = dbArtifacts.get(set.getKey());
 			
-			if(date.compareTo(dbDate) > 0){
+			if(dbDate == null || date.compareTo(dbDate) > 0){
 				// DB entry is older. So we must update this.
 				toDownload.add(set.getKey());
 			}

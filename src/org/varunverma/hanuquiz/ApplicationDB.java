@@ -67,10 +67,11 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		 */
 		
 		String createQuestionsTable = "CREATE VIRTUAL TABLE " + QuestionsTable + "  USING fts3(" + //Questions table - FTS4 Virtual Table
-		        "Id INT, " +					//Question Id
-				"Question VARCHAR(200), " +		//Question Text
-		        "Level INT, " +					//Level 
-				"Choice INT " +				//Choice
+		        "ID INTEGER PRIMARY KEY ASC, " +	//Question Id
+				"Question VARCHAR(200), " +			//Question Text
+		        "Level INT, " +						//Level 
+				"Choice INT, " +					//Choice
+				"CreatedAt DATETIME " +				//Set the default value of the Created at time stamp
 		        ")";
 		        
 		String createAnswersTable = "CREATE TABLE " + AnswersTable + " (" + 
@@ -82,7 +83,6 @@ public class ApplicationDB extends SQLiteOpenHelper{
 				"ParamName VARCHAR(20), " + 		// Parameter Name
 				"ParamValue VARCHAR(20)" + 			// Parameter Value
 				")";
-		
 		
 		String createOptionsTable = "CREATE TABLE " + OptionsTable + " (" + 
 				"QuestionId INT, " + 		// Question ID
@@ -97,28 +97,25 @@ public class ApplicationDB extends SQLiteOpenHelper{
 				")";
 		
 		String createQuizTable = "CREATE TABLE " + QuizTable + " (" + 
-				"QuizId INT, " + 		// Question ID
-				"Level INT, " + 		// Level
-				"Count INT, " + 		// Count
-				"QuestionIds VARCHAR(100) " + 			// Question IDs seperated by comma
+				"ID INTEGER PRIMARY KEY ASC, " + // Question ID
+				"Level INT, " + 					// Level
+				"Count INT, " + 					// Count
+				"QuestionIds VARCHAR(100), " + 	// Question IDs seperated by comma
+				"CreatedAt DATETIME " +
 				")";
 		
 		// create a new table - if not existing
 		try {
 			// Create Tables.
 			Log.i(Application.TAG, "Creating Tables for Version:" + String.valueOf(DBVersion));
-			
-			db.beginTransaction();				//Start of LUW
-			
+				
 			db.execSQL(createQuestionsTable);
 			db.execSQL(createAnswersTable);			
 			db.execSQL(createOptionsTable);
 			db.execSQL(createQuestionsMetaTable);
 			db.execSQL(createQuizTable);
 			db.execSQL(createSettingsTable);
-			
-			db.endTransaction();				//End of LUW
-			
+						
 			Log.i(Application.TAG, "Tables created successfully");
 
 		} catch (SQLException e) {
@@ -213,7 +210,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		 */
 		QuizManager qmgr = QuizManager.getInstance();
 		String questionIds;
-		String selection = "Level = \'" + level + "'";
+		String selection = "Level = '" + level + "'";
 		List<Question> questionlist = new ArrayList<Question>();
 		
 		Cursor qCursor = data_base.query(QuizTable, null, selection, null, null, null, null);
@@ -237,7 +234,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 	synchronized List<Question> getQuestionsByIds(String questionIds){
 		
 		// questionIds is CSV
-		String selection = "ID IN '" + questionIds + "'";
+		String selection = "ID IN (" + questionIds + ")";
 		
 		List<Question> list = new ArrayList<Question>();
 		
