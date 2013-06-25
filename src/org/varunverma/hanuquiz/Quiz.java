@@ -1,6 +1,7 @@
 package org.varunverma.hanuquiz;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Quiz {
@@ -56,13 +57,25 @@ public class Quiz {
 		
 		if(!questions.isEmpty() && questionsList.isEmpty()){
 
-			/*
-			 * TODO Pramodh = Load Questions
-			 * 
+			/* 
 			 * The list of question ids is available in attribute: questions
 			 * From this list, select from DB and build Question Object and pass
 			 * Call method: ApplicationDB method : getQuestionsByIds(questionIds);
 			 */
+			
+			ApplicationDB Appdb = ApplicationDB.getInstance();
+			Iterator Iter = questions.iterator();
+			String questionIds = "";
+			if(Iter.hasNext())
+			{
+			 do{
+					Integer qid = (Integer)Iter.next();
+					questionIds = questionIds + ",";
+				}while(Iter.hasNext());
+			}
+		
+			questionsList = Appdb.getQuestionsByIds(questionIds);
+			
 			
 		}
 	
@@ -85,12 +98,47 @@ public class Quiz {
 		
 	}
 	
-	void saveToDB() {
+	void saveToDB() throws Exception{
 		/*
-		 * TODO - Pramodh - Save Quiz to DB
 		 * If Error occurs during save, then throw Exception
 		 * Call DB Method executeDBTransactions - It will ensure either all or none.
 		 */
+		
+		ApplicationDB Appdb = ApplicationDB.getInstance();
+		
+		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
+		DBContentValues QuizData = new DBContentValues();
+		
+		QuizData.TableName = ApplicationDB.QuizTable;
+		//QuizData.Content = new ContentValues();	
+		QuizData.Content.put("QuizId", quizId);
+		QuizData.Content.put("Count", questions.size());
+		QuizData.Content.put("Level", level);
+		
+		Iterator Iter;
+		Iter = questions.iterator();
+		String questionids = "";
+		
+		while(Iter.hasNext()) 
+		{
+			 Question quest = (Question)Iter.next();			 
+			 questionids = questionids + "," + quest.getId();
+		 }
+		
+		QuizData.Content.put("QuestionIds", questionids);
+		QuizData.dbOperation = DBContentValues.DBOperation.INSERT;
+		transactionData.add(QuizData);
+		
+		boolean success;
+		try {
+			
+			Appdb.executeDBTransaction(transactionData);
+			success = true;
+			
+		} catch (Exception e) {
+			success = false;
+			throw e;
+		}
 		
 	}
 	

@@ -123,7 +123,6 @@ public class Question {
 
 	void saveToDB() throws Exception{
 		/*
-		 * TODO - Pramodh - Save Question to DB
 		 * If Error occurs during save, then throw Exception
 		 * Remember to maintain the transactional integrity. Either all or none.
 		 * Call DB Method executeDBTransactions - It will ensure either all or none.

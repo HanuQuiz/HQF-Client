@@ -57,8 +57,6 @@ public class ApplicationDB extends SQLiteOpenHelper{
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		/*
-		 * TODO - Pramodh to create DB Tables
-		 * 
 		 * Create Questions, Options, Answers, MetaData tables.
 		 * 
 		 * Questions will be a FTS4 table. Others will be normal tables.
@@ -185,24 +183,56 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		
 	synchronized void loadSettings(){
 		
-		/*
-		 * TODO - Pramodh to load Settings
-		 * 
+		/* 
 		 * Select from Settings table and load into memory.
 		 * Populate the Application->Settings attribute
 		 * 
 		 */
 		
+		Application App = Application.getApplicationInstance();
+		String ParamName, ParamValue;
+		Cursor SettingsCursor = data_base.query(SettingsTable, null, null, null, null, null, null);
+		if (SettingsCursor.moveToFirst()) {
+
+			do {
+				ParamName = SettingsCursor.getString(SettingsCursor.getColumnIndex("ParamName"));
+				ParamValue = SettingsCursor.getString(SettingsCursor.getColumnIndex("ParamValue"));
+				App.addParameter(ParamName, ParamValue);
+				
+			} while (SettingsCursor.moveToNext());
+		}
+
+		SettingsCursor.close();
+		
 	}
 	
 	synchronized void loadQuizListByLevel(int level) {
 		/*
-		 * TODO Pramodh - Load Quiz List by Level
 		 * populate them in the QuizManager.quizList
 		 * Populate via method: addQuizToList
 		 */
+		QuizManager qmgr = QuizManager.getInstance();
+		String questionIds;
+		String selection = "Level = \'" + level + "'";
+		List<Question> questionlist = new ArrayList<Question>();
 		
-	}
+		Cursor qCursor = data_base.query(QuizTable, null, selection, null, null, null, null);
+		if (qCursor.moveToFirst()) {
+
+			do {
+				questionIds = "";
+				questionIds = qCursor.getString(qCursor.getColumnIndex("QuestionIds"));
+				questionlist = getQuestionsByIds(questionIds);
+				Iterator Iter = questionlist.iterator();
+					if(Iter.hasNext()){
+						qmgr.addQuizToList((Quiz)Iter.next());
+					}
+				} while (qCursor.moveToNext());
+			}
+			
+}
+		
+
 	
 	synchronized List<Question> getQuestionsByIds(String questionIds){
 		
@@ -339,67 +369,4 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		return artifactList;
 	}
 	
-
-
-public void startTransaction()
-{
-	
-this.data_base.beginTransaction();	
-}
-
-public void stopTransaction()
-{
-this.data_base.close();
-this.data_base.endTransaction();
-}
-
-
-public void saveQuestion(int Id, String Question, int level, int choice )  throws Exception{
-
-	String saveQuestion = "INSERT INTO  " + QuestionsTable + " VALUES(" + 
-			"\'" + Id	+ "'"	+		// Question ID	
-			"\'" + Question	+ "\'"	+	// Question Text
-			"\'" + level	+ "\'"	+		// Level
-			"\'" + choice	+ "\'" + 	//Choice
-			");";
-	
-	this.data_base.execSQL( saveQuestion );
-	
-}
-
-public void saveOptions(int QuestionId, int OptionId,String OptionValue){
-
-	String saveOption = "INSERT INTO  " + OptionsTable + " VALUES(" + 
-			"\'" + QuestionId	+ "\'"	+		// Question ID	
-			"\'" + OptionId	+ "\'"	+	// Option Id
-			"\'" + OptionValue	+ "\'"	+		//OPtion Value
-			")";
-	
-	this.data_base.execSQL( saveOption );
-	
-}
-
-public void saveAnswers(int QuestionId, int AnswerId){
-
-	String saveAnswer = "INSERT INTO  " + AnswersTable + " VALUES(" + 
-			"\'" + QuestionId	+ "\'"	+		// Question ID	
-			"\'" + AnswerId	+ "\'"	+	// Answer Id - Option Id
-			")";
-	
-	this.data_base.execSQL( saveAnswer );
-	
-}
-
-public void saveMetaData(int QuestionId, String tag){
-
-	String saveAnswer = "INSERT INTO  " + MetaDataTable + " VALUES(" + 
-			"\'" + QuestionId	+ "\'"	+		// Question ID	
-			"\'" + "tag"	+ "\'"	+		// MetaKey = tag
-			"\'" + tag	+ "\'"	+	//MetaValue = tag inputted
-			")";
-	
-	this.data_base.execSQL( saveAnswer );
-	
-}
-
 }
