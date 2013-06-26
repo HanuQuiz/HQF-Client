@@ -210,6 +210,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		 */
 		QuizManager qmgr = QuizManager.getInstance();
 		String questionIds;
+		int questionId, index, quizId;
 		String selection = "Level = '" + level + "'";
 		List<Question> questionlist = new ArrayList<Question>();
 		
@@ -217,13 +218,35 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		if (qCursor.moveToFirst()) {
 
 			do {
+				Quiz quiz_obj = new Quiz();
+				
 				questionIds = "";
 				questionIds = qCursor.getString(qCursor.getColumnIndex("QuestionIds"));
-				questionlist = getQuestionsByIds(questionIds);
-				Iterator Iter = questionlist.iterator();
-					if(Iter.hasNext()){
-						qmgr.addQuizToList((Quiz)Iter.next());
-					}
+				quizId = qCursor.getInt(qCursor.getColumnIndex("ID"));
+				
+				quiz_obj.setLevel(level);
+				quiz_obj.setQuizId(quizId);
+				
+				index = 0;
+				do{
+						index = questionIds.indexOf(",");
+						if(index <= 0)
+						{
+							questionId = Integer.parseInt( questionIds ); //No comma found, thats the only questionId left
+							quiz_obj.addQuestion(questionId);
+							break;
+						}
+						else
+						{
+							questionId = Integer.parseInt( questionIds.substring(0,index) );
+							quiz_obj.addQuestion(questionId);
+							questionIds = questionIds.substring(index, questionIds.length()); //Shrink the question Ids to fetch the next
+						}
+					}while(index > 0);
+		
+				qmgr.addQuizToList(quiz_obj);
+				quiz_obj = null; //Removing object properties, since we're in loop
+				
 				} while (qCursor.moveToNext());
 			}
 			
