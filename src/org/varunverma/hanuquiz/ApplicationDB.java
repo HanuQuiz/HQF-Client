@@ -212,43 +212,41 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		String questionIds;
 		int questionId, index, quizId;
 		String selection = "Level = '" + level + "'";
-		List<Question> questionlist = new ArrayList<Question>();
-		
+
 		Cursor qCursor = data_base.query(QuizTable, null, selection, null, null, null, null);
 		if (qCursor.moveToFirst()) {
 
 			do {
 				Quiz quiz_obj = new Quiz();
-				
+
 				questionIds = "";
 				questionIds = qCursor.getString(qCursor.getColumnIndex("QuestionIds"));
 				quizId = qCursor.getInt(qCursor.getColumnIndex("ID"));
-				
+
 				quiz_obj.setLevel(level);
 				quiz_obj.setQuizId(quizId);
-				
+
 				index = 0;
-				do{
-						index = questionIds.indexOf(",");
-						if(index <= 0)
-						{
-							questionId = Integer.parseInt( questionIds ); //No comma found, thats the only questionId left
-							quiz_obj.addQuestion(questionId);
-							break;
-						}
-						else
-						{
-							questionId = Integer.parseInt( questionIds.substring(0,index) );
-							quiz_obj.addQuestion(questionId);
-							questionIds = questionIds.substring(index, questionIds.length()); //Shrink the question Ids to fetch the next
-						}
-					}while(index > 0);
-		
+				do {
+					index = questionIds.indexOf(",");
+					if (index <= 0) {
+						questionId = Integer.parseInt(questionIds); // No comma found, thats the only questionId left
+						quiz_obj.addQuestion(questionId);
+						break;
+					} else {
+						questionId = Integer.parseInt(questionIds.substring(0,index));
+						quiz_obj.addQuestion(questionId);
+						questionIds = questionIds.substring(index + 1,questionIds.length()); // Shrink the question Ids to fetch the next
+					}
+				} while (index > 0);
+
 				qmgr.addQuizToList(quiz_obj);
-				quiz_obj = null; //Removing object properties, since we're in loop
-				
-				} while (qCursor.moveToNext());
-			}
+				quiz_obj = null; // Removing object properties, since we're in loop
+
+			} while (qCursor.moveToNext());
+		}
+		
+		qCursor.close();
 			
 }
 		
@@ -387,6 +385,18 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		cursor.close();
 		
 		return artifactList;
+	}
+
+	HashMap<Integer, String> getUserAnswers(int quizId,	String questionIds) {
+		
+		HashMap<Integer,String> userAnswers = new HashMap<Integer,String>();
+		
+		/*
+		 * TODO - Pramodh to read the User Answers table
+		 * Then populate the hash map and return
+		 */
+		
+		return userAnswers;
 	}
 	
 }

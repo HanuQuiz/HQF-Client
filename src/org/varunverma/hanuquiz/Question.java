@@ -14,6 +14,7 @@ public class Question {
 	private HashMap<Integer,String> options;
 	private List<Integer> answers;
 	private List<String> tags;
+	private String myAnswer;
 	
 	Question(){
 		
@@ -207,17 +208,32 @@ public class Question {
 			
 		}
 
-		boolean success;
 		try {
 
 			Appdb.executeDBTransaction(transactionData);
-			success = true;
 
 		} catch (Exception e) {
-			success = false;
 			throw e;
 		}
 				
+	}
+	
+	public void updateMyAnswer(String answer){
+		
+		myAnswer = answer;
+		
+	}
+	
+	boolean evaluateQuestion(){
+		
+		/*
+		 * TODO - Pramodh to evaluate Question
+		 * The users answer is available as an attribute
+		 * Compare with the correct answers and evaluate
+		 * If correct then return true, else false
+		 */
+		
+		return false;
 	}
 
 	public String getHTML() {
@@ -231,7 +247,7 @@ public class Question {
 				"</body></html>";
 		
 		/*
-		 * TODO Pramodh - to build html from question data
+		 * TODO - Pramodh to build html from question data
 		 */
 		
 		return html;

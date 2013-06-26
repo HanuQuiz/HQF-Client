@@ -1,6 +1,7 @@
 package org.varunverma.hanuquiz;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,10 +9,15 @@ import android.content.ContentValues;
 
 public class Quiz {
 
-	private int quizId, level;
+	private int quizId, level, score;
+	private QuizStatus status;
 	private String createdAt;
 	private List<Integer> questions;		// List of Question Ids
 	private List<Question> questionsList;	// List of Questions
+	
+	public enum QuizStatus {
+		NotStarted, Paused, Completed;
+	}
 	
 	Quiz(){
 		questions = new ArrayList<Integer>();
@@ -48,6 +54,27 @@ public class Quiz {
 		this.level = level;
 	}
 	/**
+	 * @return the score
+	 */
+	public int getScore() {
+		return score;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public QuizStatus getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	void setStatus(QuizStatus status) {
+		this.status = status;
+	}
+
+	/**
 	 * @return the createdAt
 	 */
 	public String getCreatedAt() {
@@ -81,18 +108,27 @@ public class Quiz {
 			 */
 			
 			ApplicationDB Appdb = ApplicationDB.getInstance();
-			Iterator Iter = questions.iterator();
+			Iterator<Integer> Iter = questions.iterator();
 			String questionIds = "";
 			if(Iter.hasNext())
 			{
 			 do{
-					Integer qid = (Integer)Iter.next();
-					questionIds = questionIds + ",";
+					Integer qid = Iter.next();
+					questionIds = questionIds + "," + qid;
 				}while(Iter.hasNext());
 			}
 		
 			questionsList = Appdb.getQuestionsByIds(questionIds);
 			
+			// Get users answers also
+			HashMap<Integer,String> userAnswers = new HashMap<Integer,String>();
+			userAnswers = Appdb.getUserAnswers(quizId, questionIds);
+			
+			/*
+			 * TODO - Pramodh to set the users answers
+			 * Loop on questionList, get the answer from userAnswers
+			 * Call the method updateMyAnswer of Question Object
+			 */
 			
 		}
 	
@@ -133,7 +169,7 @@ public class Quiz {
 		QuizData.Content.put("Level", level);
 		QuizData.Content.put("CreatedAt", createdAt);
 		
-		Iterator Iter;
+		Iterator<Integer> Iter;
 		Iter = questions.iterator();
 		String questionids = "";
 		
@@ -149,16 +185,29 @@ public class Quiz {
 		QuizData.dbOperation = DBContentValues.DBOperation.INSERT;
 		transactionData.add(QuizData);
 		
-		boolean success;
 		try {
 			
 			Appdb.executeDBTransaction(transactionData);
-			success = true;
 			
 		} catch (Exception e) {
-			success = false;
 			throw e;
 		}
+		
+	}
+	
+	public void evaluateQuiz(){
+		
+		/*
+		 * TODO - Pramodh to evaluate quiz
+		 * Evaluate means that user has completed the quiz
+		 * and wants to see his score
+		 * Loop on all questions and check if the answer is correct or not
+		 * Make use of the evaluate method on the Question
+		 * For each correct answer - award 1 point.
+		 * as an attribute in the Question object.
+		 * After evaluation, save the status of the quiz and the score in DB
+		 * In the same LUW save the MyAnswers table also
+		 */
 		
 	}
 	
