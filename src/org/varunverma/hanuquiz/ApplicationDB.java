@@ -283,6 +283,9 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		Question question = new Question();
 		
 		question.setId(qCursor.getInt(qCursor.getColumnIndex("ID")));
+		question.setQuestion(qCursor.getString(qCursor.getColumnIndex("Question")));
+		question.setLevel(qCursor.getInt(qCursor.getColumnIndex("Level")));
+		question.setChoiceType(qCursor.getInt(qCursor.getColumnIndex("Choice")));
 		
 		String selection = "QuestionId='" + question.getId() + "'";
 		

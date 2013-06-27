@@ -110,12 +110,13 @@ public class Quiz {
 			ApplicationDB Appdb = ApplicationDB.getInstance();
 			Iterator<Integer> Iter = questions.iterator();
 			String questionIds = "";
-			if(Iter.hasNext())
-			{
-			 do{
-					Integer qid = Iter.next();
-					questionIds = questionIds + "," + qid;
-				}while(Iter.hasNext());
+			if (Iter.hasNext()) {
+				
+				questionIds = String.valueOf(Iter.next());
+				
+				while (Iter.hasNext()) {
+					questionIds = questionIds + "," + String.valueOf(Iter.next());
+				}
 			}
 		
 			questionsList = Appdb.getQuestionsByIds(questionIds);

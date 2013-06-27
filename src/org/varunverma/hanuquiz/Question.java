@@ -242,7 +242,7 @@ public class Question {
 		
 		// Dummy HTML for testing
 		html = "<html><body>" +
-				"This is the question." +
+				question + "<br><br>" +
 				"Select the correct Answer." +
 				"</body></html>";
 		
