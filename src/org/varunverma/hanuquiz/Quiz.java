@@ -10,6 +10,7 @@ import android.content.ContentValues;
 public class Quiz {
 
 	private int quizId, level, score;
+	private String description;
 	private QuizStatus status;
 	private String createdAt;
 	private List<Integer> questions;		// List of Question Ids
@@ -22,6 +23,7 @@ public class Quiz {
 	Quiz(){
 		questions = new ArrayList<Integer>();
 		questionsList = new ArrayList<Question>();
+		createdAt = description = "";
 	}
 	
 	@Override
@@ -41,6 +43,20 @@ public class Quiz {
 	void setQuizId(int quizId) {
 		this.quizId = quizId;
 	}
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	void setDescription(String description) {
+		this.description = description;
+	}
+
 	/**
 	 * @return the level
 	 */
@@ -166,6 +182,7 @@ public class Quiz {
 		QuizData.TableName = ApplicationDB.QuizTable;
 		QuizData.Content = new ContentValues();
 		QuizData.Content.put("ID", quizId);
+		QuizData.Content.put("Description", description);
 		QuizData.Content.put("Count", questions.size());
 		QuizData.Content.put("Level", level);
 		QuizData.Content.put("CreatedAt", createdAt);

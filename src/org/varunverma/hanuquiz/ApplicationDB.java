@@ -98,6 +98,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		
 		String createQuizTable = "CREATE TABLE " + QuizTable + " (" + 
 				"ID INTEGER PRIMARY KEY ASC, " + // Question ID
+				"Description VARCHAR, " + 		// Quiz Description
 				"Level INT, " + 					// Level
 				"Count INT, " + 					// Count
 				"QuestionIds VARCHAR(100), " + 	// Question IDs seperated by comma
@@ -225,6 +226,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 
 				quiz_obj.setLevel(level);
 				quiz_obj.setQuizId(quizId);
+				quiz_obj.setDescription(qCursor.getString(qCursor.getColumnIndex("Description")));
 
 				index = 0;
 				do {
@@ -248,8 +250,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		
 		qCursor.close();
 			
-}
-		
+	}		
 
 	
 	synchronized List<Question> getQuestionsByIds(String questionIds){

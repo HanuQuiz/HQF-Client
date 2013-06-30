@@ -296,6 +296,7 @@ public class Application {
 
 	public List<Quiz> getQuizListByLevel(int level) {
 		
+		QuizManager.getInstance().clearQuizList();
 		appDB.loadQuizListByLevel(level);
 		return QuizManager.getInstance().getQuizList();
 		

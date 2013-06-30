@@ -107,6 +107,7 @@ public class DownloadQuizCommand extends Command {
 			Quiz q = new Quiz();
 			
 			q.setQuizId(quizData.getInt("QuizId"));
+			q.setDescription(quizData.getString("Description"));
 			q.setLevel(quizData.getInt("Level"));
 			q.setCreatedAt(quizData.getString("CreatedAt"));
 
