@@ -240,15 +240,9 @@ public class Question {
 		
 		String html = "";
 		
-		// Dummy HTML for testing
 		html = "<html><body>" +
-				question + "<br><br>" +
-				"Select the correct Answer." +
+				question + "<br>" +
 				"</body></html>";
-		
-		/*
-		 * TODO - Pramodh to build html from question data
-		 */
 		
 		return html;
 	}

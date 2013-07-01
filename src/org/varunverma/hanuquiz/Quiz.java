@@ -228,5 +228,14 @@ public class Quiz {
 		 */
 		
 	}
+
+	public void pause() {
+		/*
+		 * TODO - Pramodh - to pause the quiz
+		 * If this method is called then the user wants to stop the quiz
+		 * Set the status as Paused in object and in DB
+		 */
+		
+	}
 	
 }
