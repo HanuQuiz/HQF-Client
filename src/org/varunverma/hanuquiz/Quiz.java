@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import android.content.ContentValues;
 
@@ -147,6 +148,17 @@ public class Quiz {
 			 * Call the method updateMyAnswer of Question Object
 			 */
 			
+			Iterator<Question> quest_iter = questionsList.listIterator();
+			if(quest_iter.hasNext())
+			{
+				do{
+					Question quest = quest_iter.next();
+					String myAnswer = userAnswers.get(quest.getId());
+					quest.updateMyAnswer(myAnswer);
+				}while(quest_iter.hasNext());
+			}
+					
+						
 		}
 	
 		return questionsList;
@@ -227,6 +239,69 @@ public class Quiz {
 		 * In the same LUW save the MyAnswers table also
 		 */
 		
+		score = 0; // defaulted
+		
+		ListIterator<Question> questions = questionsList.listIterator();
+		if(questions.hasNext())
+		{
+			do{
+				
+				Question quest = new Question( );			
+				quest = questions.next();
+				if(quest.evaluateQuestion() == true) score += 1;
+				
+			}while(questions.hasNext());
+		}
+		
+		// -- Score is now evaluated, now save the quiz status & MyAnswers in DB -- //
+		// -- Update Quiz Table --
+				ApplicationDB Appdb = ApplicationDB.getInstance();
+				List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
+				DBContentValues QuizTable = new DBContentValues();
+
+				QuizTable.TableName = ApplicationDB.QuizTable;
+				QuizTable.Content = new ContentValues();
+				QuizTable.Content.put("MyScore", score);
+				
+				QuizTable.where = "ID = '" + quizId + "'";
+				
+				QuizTable.dbOperation = DBContentValues.DBOperation.UPDATE;
+				transactionData.add(QuizTable);
+				
+		// -- Update MyAnswers table --
+				DBContentValues MyAnsTable = new DBContentValues();
+
+				MyAnsTable.TableName = ApplicationDB.MyAnswersTable;
+				MyAnsTable.Content = new ContentValues();
+				
+				Iterator <Question>Iter = questionsList.iterator();
+				
+				if(Iter.hasNext())
+				{
+					
+					do{
+					Question quest = new Question();
+					
+					quest = Iter.next();
+					MyAnsTable.Content.put("QuizId", quizId );
+					MyAnsTable.Content.put("QuestionId", quest.getId() );
+					MyAnsTable.Content.put("MyAnswer", quest.getMyAnswer() );		
+					quest = null;
+					}while(Iter.hasNext());
+					
+					QuizTable.dbOperation = DBContentValues.DBOperation.INSERT;
+					transactionData.add(MyAnsTable);
+				}
+								
+
+				try {
+
+					Appdb.executeDBTransaction(transactionData);
+
+				} catch (Exception e) {
+					
+				}
+		
 	}
 
 	public void pause() {
@@ -235,7 +310,29 @@ public class Quiz {
 		 * If this method is called then the user wants to stop the quiz
 		 * Set the status as Paused in object and in DB
 		 */
+		status = QuizStatus.Paused; //Set status of current object to "Paused"
 		
+		// -- Save Status in DB as well --
+		
+		ApplicationDB Appdb = ApplicationDB.getInstance();
+		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
+		DBContentValues QuizTable = new DBContentValues();
+
+		QuizTable.TableName = ApplicationDB.QuizTable;
+		QuizTable.Content = new ContentValues();
+		QuizTable.Content.put("Status", QuizStatus.Paused.toString());
+		
+		QuizTable.where = "ID = '" + quizId + "'";
+		
+		QuizTable.dbOperation = DBContentValues.DBOperation.UPDATE;
+		transactionData.add(QuizTable);
+		
+		try{
+			Appdb.executeDBTransaction(transactionData);
+		}catch (Exception e) {
+			// Log.e(Application.TAG, e.getMessage(), e);	
+		}
+				
 	}
 	
 }

@@ -1,6 +1,7 @@
 package org.varunverma.hanuquiz;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -9,7 +10,7 @@ import android.content.ContentValues;
 
 public class Question {
 
-	private int id, level, choiceType;
+	private int id, level, choiceType, point;
 	private String question, createdAt;
 	private HashMap<Integer,String> options;
 	private List<Integer> answers;
@@ -23,7 +24,7 @@ public class Question {
 		options = new HashMap<Integer,String>();
 		answers = new ArrayList<Integer>();
 		tags = new ArrayList<String>();
-		
+		point = 0;
 	}
 	
 	/**
@@ -161,7 +162,7 @@ public class Question {
 			OptionsData.Content = new ContentValues();
 
 			Integer option_id = (Integer) iter_options.next();
-			String option_value = (String) options.get(option_id);
+			String option_value = options.get(option_id);
 
 			OptionsData.Content.put("QuestionId", id);
 			OptionsData.Content.put("OptionId", option_id);
@@ -224,6 +225,12 @@ public class Question {
 		
 	}
 	
+	
+	public String getMyAnswer()
+	{
+		return myAnswer;
+	}
+	
 	boolean evaluateQuestion(){
 		
 		/*
@@ -233,7 +240,25 @@ public class Question {
 		 * If correct then return true, else false
 		 */
 		
-		return false;
+		if(myAnswer == null || myAnswer == "") return false; // NO User Answer Found
+		
+		String[] userAnswers  = myAnswer.split(",");
+		
+		boolean found = true; //defaulted found == true
+		
+		Iterator <Integer>Iter = answers.iterator();
+		
+		if(Iter.hasNext())
+		{
+			do{
+				if( !Arrays.asList(userAnswers).contains(Iter.next().toString()) ) found = false;
+			}while(Iter.hasNext());
+			
+		}
+		else found = false;
+		
+		
+		return found;
 	}
 
 	public String getHTML() {

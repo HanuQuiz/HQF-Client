@@ -27,7 +27,8 @@ public class ApplicationDB extends SQLiteOpenHelper{
 	static final String OptionsTable = "Options";
 	static final String AnswersTable = "Answers";
 	static final String MetaDataTable = "MetaData";
-	
+	static final String MyAnswersTable = "MyAnswers";
+
 	private SQLiteDatabase data_base;
 	
 	static ApplicationDB getInstance(Context context){
@@ -102,7 +103,15 @@ public class ApplicationDB extends SQLiteOpenHelper{
 				"Level INT, " + 					// Level
 				"Count INT, " + 					// Count
 				"QuestionIds VARCHAR(100), " + 	// Question IDs seperated by comma
+				"Status INT, " + 					// Status of Quiz
+				"MyScore INT, " + 					// Current Quiz Score
 				"CreatedAt DATETIME " +
+				")";
+		
+		String createMyAnswersTable = "CREATE TABLE " + MyAnswersTable + " (" + 
+				"QuizId INTEGER PRIMARY KEY ASC, " + // Quiz ID
+				"QuestionId INT, " + // Question Id
+				"MyAnswer VARCHAR(100)"  +
 				")";
 		
 		// create a new table - if not existing
@@ -116,6 +125,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 			db.execSQL(createQuestionsMetaTable);
 			db.execSQL(createQuizTable);
 			db.execSQL(createSettingsTable);
+			db.execSQL(createMyAnswersTable);			
 						
 			Log.i(Application.TAG, "Tables created successfully");
 
@@ -133,7 +143,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 	
 	void openDBForWriting(){
 		data_base = appDB.getWritableDatabase();
-	}
+ 	}
 
 	synchronized void executeDBTransaction(List<DBContentValues> dbData) throws Exception{
 		
@@ -400,6 +410,23 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		 * Then populate the hash map and return
 		 */
 		
+		String myAnswers,selection;
+		Integer questionId;
+		selection = "QuizId = '"+ quizId +"' AND QuestionId IN (" + questionIds + ")";
+		
+		Cursor ansCursor = data_base.query(MyAnswersTable, null, selection, null, null, null, null);
+		if (ansCursor.moveToFirst()) {
+
+			do {
+				myAnswers = ""; //defaulted
+				myAnswers = ansCursor.getString(ansCursor.getColumnIndex("MyAnswers"));
+				questionId = ansCursor.getInt(ansCursor.getColumnIndex("QuestionId"));
+				userAnswers.put(questionId, myAnswers);
+			} while (ansCursor.moveToNext());
+		}
+
+		ansCursor.close();
+
 		return userAnswers;
 	}
 	
