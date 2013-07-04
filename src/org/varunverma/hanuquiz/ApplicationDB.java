@@ -105,13 +105,15 @@ public class ApplicationDB extends SQLiteOpenHelper{
 				"QuestionIds VARCHAR(100), " + 	// Question IDs seperated by comma
 				"Status INT, " + 					// Status of Quiz
 				"MyScore INT, " + 					// Current Quiz Score
-				"CreatedAt DATETIME " +
+				"CreatedAt DATETIME, " +
+				"PlayedAt DATETIME " +
 				")";
 		
 		String createMyAnswersTable = "CREATE TABLE " + MyAnswersTable + " (" + 
-				"QuizId INTEGER PRIMARY KEY ASC, " + // Quiz ID
-				"QuestionId INT, " + // Question Id
-				"MyAnswer VARCHAR(100)"  +
+				"QuizId INTEGER , " + // Quiz ID
+				"QuestionId INTEGER , " + // Question Id
+				"MyAnswers VARCHAR(100), "  +
+				"PRIMARY KEY (QuizId, QuestionId)" +
 				")";
 		
 		// create a new table - if not existing

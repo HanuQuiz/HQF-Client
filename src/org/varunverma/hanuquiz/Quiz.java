@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import android.util.Log;
 
 import android.content.ContentValues;
 
@@ -262,6 +263,7 @@ public class Quiz {
 				QuizTable.TableName = ApplicationDB.QuizTable;
 				QuizTable.Content = new ContentValues();
 				QuizTable.Content.put("MyScore", score);
+				QuizTable.Content.put("Status", QuizStatus.Completed.toString());
 				
 				QuizTable.where = "ID = '" + quizId + "'";
 				
@@ -269,37 +271,36 @@ public class Quiz {
 				transactionData.add(QuizTable);
 				
 		// -- Update MyAnswers table --
-				DBContentValues MyAnsTable = new DBContentValues();
-
-				MyAnsTable.TableName = ApplicationDB.MyAnswersTable;
-				MyAnsTable.Content = new ContentValues();
 				
+
 				Iterator <Question>Iter = questionsList.iterator();
 				
 				if(Iter.hasNext())
 				{
-					
 					do{
-					Question quest = new Question();
-					
-					quest = Iter.next();
-					MyAnsTable.Content.put("QuizId", quizId );
-					MyAnsTable.Content.put("QuestionId", quest.getId() );
-					MyAnsTable.Content.put("MyAnswer", quest.getMyAnswer() );		
-					quest = null;
-					}while(Iter.hasNext());
-					
-					QuizTable.dbOperation = DBContentValues.DBOperation.INSERT;
-					transactionData.add(MyAnsTable);
+						DBContentValues MyAnsTable = new DBContentValues();
+						MyAnsTable.TableName = ApplicationDB.MyAnswersTable;
+						MyAnsTable.dbOperation = DBContentValues.DBOperation.INSERT;
+						
+						MyAnsTable.Content = new ContentValues();
+						Question quest = new Question();
+						
+						quest = Iter.next();
+						MyAnsTable.Content.put("QuizId", quizId );
+						MyAnsTable.Content.put("QuestionId", quest.getId() );
+						MyAnsTable.Content.put("MyAnswers", quest.getMyAnswer() );		
+						quest = null;
+						
+						transactionData.add(MyAnsTable);
+						}while(Iter.hasNext());
 				}
-								
 
 				try {
 
 					Appdb.executeDBTransaction(transactionData);
 
 				} catch (Exception e) {
-					
+					Log.e(Application.TAG, e.getMessage(), e);	
 				}
 		
 	}
@@ -330,7 +331,7 @@ public class Quiz {
 		try{
 			Appdb.executeDBTransaction(transactionData);
 		}catch (Exception e) {
-			// Log.e(Application.TAG, e.getMessage(), e);	
+			Log.e(Application.TAG, e.getMessage(), e);	
 		}
 				
 	}
