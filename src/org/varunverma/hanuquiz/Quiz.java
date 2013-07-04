@@ -1,6 +1,7 @@
 package org.varunverma.hanuquiz;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -10,6 +11,17 @@ import android.content.ContentValues;
 
 public class Quiz {
 
+	public static final Comparator<Quiz> SortByID = new Comparator<Quiz>(){
+		@Override
+		public int compare(Quiz lhs, Quiz rhs) {
+			if(lhs.quizId < rhs.quizId){
+				return -1;
+			}
+			else{
+				return 1;
+			}
+		}};
+	
 	private int quizId, level, score;
 	private String description;
 	private QuizStatus status;

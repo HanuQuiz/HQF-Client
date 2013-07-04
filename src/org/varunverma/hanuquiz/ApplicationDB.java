@@ -224,7 +224,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		int questionId, index, quizId;
 		String selection = "Level = '" + level + "'";
 
-		Cursor qCursor = data_base.query(QuizTable, null, selection, null, null, null, null);
+		Cursor qCursor = data_base.query(QuizTable, null, selection, null, null, null, "ID ASC");
 		if (qCursor.moveToFirst()) {
 
 			do {
