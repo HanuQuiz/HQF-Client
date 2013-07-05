@@ -25,6 +25,7 @@ public class Question {
 		answers = new ArrayList<Integer>();
 		tags = new ArrayList<String>();
 		point = 0;
+		myAnswer = "";
 	}
 	
 	/**

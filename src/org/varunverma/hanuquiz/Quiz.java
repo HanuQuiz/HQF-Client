@@ -89,6 +89,12 @@ public class Quiz {
 	public int getScore() {
 		return score;
 	}
+	/**
+	 * @param score the score to set
+	 */
+	void setScore(int score){
+		this.score = score;
+	}
 
 	/**
 	 * @return the status
@@ -266,54 +272,63 @@ public class Quiz {
 			}while(questions.hasNext());
 		}
 		
-		// -- Score is now evaluated, now save the quiz status & MyAnswers in DB -- //
+		// -- Score is now evaluated, now save the quiz status & MyAnswers in DB
+		// -- //
 		// -- Update Quiz Table --
-				ApplicationDB Appdb = ApplicationDB.getInstance();
-				List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
-				DBContentValues QuizTable = new DBContentValues();
+		ApplicationDB Appdb = ApplicationDB.getInstance();
+		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
+		DBContentValues QuizTable = new DBContentValues();
 
-				QuizTable.TableName = ApplicationDB.QuizTable;
-				QuizTable.Content = new ContentValues();
-				QuizTable.Content.put("MyScore", score);
-				QuizTable.Content.put("Status", QuizStatus.Completed.toString());
-				
-				QuizTable.where = "ID = '" + quizId + "'";
-				
-				QuizTable.dbOperation = DBContentValues.DBOperation.UPDATE;
-				transactionData.add(QuizTable);
-				
-		// -- Update MyAnswers table --
-				
+		QuizTable.TableName = ApplicationDB.QuizTable;
+		QuizTable.Content = new ContentValues();
+		QuizTable.Content.put("MyScore", score);
+		QuizTable.Content.put("Status", QuizStatus.Completed.toString());
 
-				Iterator <Question>Iter = questionsList.iterator();
+		QuizTable.where = "ID = '" + quizId + "'";
+
+		QuizTable.dbOperation = DBContentValues.DBOperation.UPDATE;
+		transactionData.add(QuizTable);
+
+		/*
+		 * Update MyAnswers table --
+		 * Delete old answers and insert new ones
+		 */
+		DBContentValues deleteAnswers = new DBContentValues();
+		deleteAnswers.TableName = ApplicationDB.MyAnswersTable;
+		deleteAnswers.dbOperation = DBContentValues.DBOperation.DELETE;
+		deleteAnswers.where = "QuizId = '" + quizId + "'";
+		transactionData.add(deleteAnswers);
+
+		Iterator<Question> Iter = questionsList.iterator();
+
+		if (Iter.hasNext()) {
+			do {
+				DBContentValues MyAnsTable = new DBContentValues();
+				MyAnsTable.TableName = ApplicationDB.MyAnswersTable;
+				MyAnsTable.dbOperation = DBContentValues.DBOperation.INSERT;
+
+				MyAnsTable.Content = new ContentValues();
+				Question quest = new Question();
+
+				quest = Iter.next();
+				MyAnsTable.Content.put("QuizId", quizId);
+				MyAnsTable.Content.put("QuestionId", quest.getId());
+				MyAnsTable.Content.put("MyAnswers", quest.getMyAnswer());
+				quest = null;
+
+				transactionData.add(MyAnsTable);
 				
-				if(Iter.hasNext())
-				{
-					do{
-						DBContentValues MyAnsTable = new DBContentValues();
-						MyAnsTable.TableName = ApplicationDB.MyAnswersTable;
-						MyAnsTable.dbOperation = DBContentValues.DBOperation.INSERT;
-						
-						MyAnsTable.Content = new ContentValues();
-						Question quest = new Question();
-						
-						quest = Iter.next();
-						MyAnsTable.Content.put("QuizId", quizId );
-						MyAnsTable.Content.put("QuestionId", quest.getId() );
-						MyAnsTable.Content.put("MyAnswers", quest.getMyAnswer() );		
-						quest = null;
-						
-						transactionData.add(MyAnsTable);
-						}while(Iter.hasNext());
-				}
+			} while (Iter.hasNext());
+		}
 
-				try {
+		try {
 
-					Appdb.executeDBTransaction(transactionData);
+			Appdb.executeDBTransaction(transactionData);
+			setStatus(Quiz.QuizStatus.Completed);
 
-				} catch (Exception e) {
-					Log.e(Application.TAG, e.getMessage(), e);	
-				}
+		} catch (Exception e) {
+			Log.e(Application.TAG, e.getMessage(), e);
+		}
 		
 	}
 

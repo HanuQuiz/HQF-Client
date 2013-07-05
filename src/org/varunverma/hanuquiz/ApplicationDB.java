@@ -239,6 +239,20 @@ public class ApplicationDB extends SQLiteOpenHelper{
 				quiz_obj.setLevel(level);
 				quiz_obj.setQuizId(quizId);
 				quiz_obj.setDescription(qCursor.getString(qCursor.getColumnIndex("Description")));
+				quiz_obj.setScore(qCursor.getInt(qCursor.getColumnIndex("MyScore")));
+				
+				String quizStatus = qCursor.getString(qCursor.getColumnIndex("Status"));
+				if(quizStatus != null){
+					if(quizStatus.contentEquals(Quiz.QuizStatus.Completed.toString())){
+						quiz_obj.setStatus(Quiz.QuizStatus.Completed);
+					}
+					if(quizStatus.contentEquals(Quiz.QuizStatus.Paused.toString())){
+						quiz_obj.setStatus(Quiz.QuizStatus.Paused);
+					}
+					if(quizStatus.contentEquals(Quiz.QuizStatus.NotStarted.toString())){
+						quiz_obj.setStatus(Quiz.QuizStatus.NotStarted);
+					}
+				}
 
 				index = 0;
 				do {
