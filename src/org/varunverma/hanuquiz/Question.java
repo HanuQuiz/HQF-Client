@@ -222,7 +222,9 @@ public class Question {
 	
 	public void updateMyAnswer(String answer){
 		
-		myAnswer = answer;
+		if(answer != null){
+			myAnswer = answer;
+		}
 		
 	}
 	
