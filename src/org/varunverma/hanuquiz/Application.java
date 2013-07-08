@@ -42,7 +42,7 @@ public class Application {
 	private ApplicationDB appDB;
 	
 	HashMap<String,String> Settings;
-	
+
 	public static Application getApplicationInstance(){
 		// A singleton class.
 		if(application == null){
@@ -301,4 +301,11 @@ public class Application {
 		return QuizManager.getInstance().getQuizList();
 		
 	}
+
+	public void setSyncCategory(String syncCategory) {
+		
+		Settings.put("SyncTag", syncCategory);
+		
+	}
+
 }

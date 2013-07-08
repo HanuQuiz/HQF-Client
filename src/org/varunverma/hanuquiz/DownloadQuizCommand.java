@@ -69,6 +69,7 @@ public class DownloadQuizCommand extends Command {
 		// Create a new HttpClient and Post Header
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost(url);
+		httppost.setHeader("Referer", "HanuQuizRocks");
 
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 		nameValuePairs.add(new BasicNameValuePair("quiz_ids", quizList));

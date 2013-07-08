@@ -84,10 +84,23 @@ public class FetchArtifactsCommand extends Command {
 		// Create a new HttpClient and Post Header  
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost(url);
+		
+		// Get the sync tags
+		String syncTag = Application.getApplicationInstance().getSettings().get("SyncTag");
+		JSONObject syncTags = new JSONObject();
+		syncTags.put("meta_key", "sync");
+		syncTags.put("meta_value", syncTag);
+		JSONArray metaData = new JSONArray();
+		metaData.put(syncTags);
+		
+		httppost.setHeader("Referer", "HanuQuizRocks");
 
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);  
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+		
 		nameValuePairs.add(new BasicNameValuePair("question_sync_time", questionsSyncTime));
 		nameValuePairs.add(new BasicNameValuePair("quiz_sync_time", quizSyncTime));
+		nameValuePairs.add(new BasicNameValuePair("meta_data", metaData.toString()));
+		
 		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 		    	
 		//Execute HTTP Post Request  
