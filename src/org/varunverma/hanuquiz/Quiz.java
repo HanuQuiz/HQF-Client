@@ -231,7 +231,17 @@ public class Quiz {
 		 }
 		
 		QuizData.Content.put("QuestionIds", questionids);
-		QuizData.dbOperation = DBContentValues.DBOperation.INSERT;
+		
+		if(Appdb.checkQuizExists(quizId)){
+			// Update the Quiz
+			QuizData.dbOperation = DBContentValues.DBOperation.UPDATE;
+			QuizData.where = "ID='" + quizId + "'";
+		}
+		else{
+			// Insert new entry
+			QuizData.dbOperation = DBContentValues.DBOperation.INSERT;
+		}
+		
 		transactionData.add(QuizData);
 		
 		try {

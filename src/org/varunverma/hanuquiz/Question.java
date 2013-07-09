@@ -138,6 +138,11 @@ public class Question {
 		 */		
 			
 		ApplicationDB Appdb = ApplicationDB.getInstance();
+		
+		// Check if question exists. If so, delete it and then re-insert
+		if(Appdb.checkQuestionExists(id)){
+			deleteQuestion();
+		}
 
 		// -- Save Question Table --
 		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
@@ -228,6 +233,15 @@ public class Question {
 		
 	}
 	
+	private void deleteQuestion(){
+		
+		/*
+		 * TODO - Pramodh to delete question and its related data
+		 * Delete Question, Option, Answers, MetaData
+		 * DO NOT delete other stuff.
+		 */
+		
+	}
 	
 	public String getMyAnswer()
 	{

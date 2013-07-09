@@ -364,7 +364,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		String[] columns = {"ID","CreatedAt"};
-		String selection = "ID in (" + quizIds + ")";;
+		String selection = "ID in (" + quizIds + ")";
 		
 		Cursor cursor = data_base.query(QuizTable, columns, selection, null, null, null, null);
 		
@@ -444,6 +444,43 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		ansCursor.close();
 
 		return userAnswers;
+	}
+
+	boolean checkQuestionExists(int questionID) {
+		
+		String[] columns = {"ID"};
+		String selection = "ID='" + questionID + "'";
+		
+		Cursor cursor = data_base.query(QuestionsTable, columns, selection, null, null, null, null);
+		
+		int count = cursor.getCount();
+		cursor.close();
+		
+		if(count > 0){
+			return true;
+		}
+		else{
+			return false;
+		}
+		
+	}
+
+	boolean checkQuizExists(int quizId) {
+		
+		String[] columns = {"ID"};
+		String selection = "ID='" + quizId + "'";
+		
+		Cursor cursor = data_base.query(QuizTable, columns, selection, null, null, null, null);
+		
+		int count = cursor.getCount();
+		cursor.close();
+		
+		if(count > 0){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 	
 }
