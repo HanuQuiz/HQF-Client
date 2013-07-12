@@ -145,8 +145,16 @@ public class DownloadQuizCommand extends Command {
 		}
 		
 		// Prepare result
-		result.getData().putInt("QuestionsDownloaded", qm.toSave.size());
+		ArrayList<String> quizDescList = new ArrayList<String>();
+		
+		Iterator<Quiz> i = qm.toSave.iterator();
+		while(i.hasNext()){
+			quizDescList.add(i.next().getDescription());
+		}
+		
+		result.getData().putInt("QuizzesDownloaded", qm.toSave.size());
 		result.getData().putBoolean("ShowNotification", true);
+		result.getData().putStringArrayList("QuizDesc", quizDescList);
 
 	}
 

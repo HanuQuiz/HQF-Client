@@ -26,8 +26,6 @@ public class LoadQuestionsFromFileCommand extends Command {
 		
 		try{
 			
-			QuestionManager qm = QuestionManager.getInstance();
-			
 			Context c = Application.getApplicationInstance().context;
 			AssetManager assetManager = c.getAssets();
 			
@@ -51,64 +49,107 @@ public class LoadQuestionsFromFileCommand extends Command {
 			}
 
 			// Parse the JSON Response
-			JSONArray jsonResponse = new JSONArray(builder.toString());
+			JSONObject jsonResponse = new JSONObject(builder.toString());
 			
-			qm.toSave.clear();
+			JSONArray questions = jsonResponse.getJSONArray("question_list");
+			loadQuestions(questions);
 			
-			for(int i=0; i<jsonResponse.length(); i++){
-				
-				JSONObject questionData = jsonResponse.getJSONObject(i);
-				
-				JSONObject question = questionData.getJSONObject("question");
-				JSONArray options = questionData.getJSONArray("options");
-				JSONArray answers = questionData.getJSONArray("answers");
-				JSONArray metaData = questionData.getJSONArray("meta");
-				
-				Question q = new Question();
-				
-				q.setId(question.getInt("ID"));
-				q.setLevel(question.getInt("Level"));
-				q.setChoiceType(question.getInt("ChoiceType"));
-				q.setQuestion(question.getString("Question"));
-				
-				for(int j=0; j<options.length(); j++){
-					
-					JSONObject option = options.getJSONObject(j);
-					q.addOption(option.getInt("OptionId"), option.getString("OptionValue"));
-					
-				}
-				
-				for(int j=0; j<answers.length(); j++){
-					
-					JSONObject answer = answers.getJSONObject(j);
-					q.addAnswer(answer.getInt("OptionId"));
-					
-				}
-				
-				for(int j=0; j<metaData.length(); j++){
-					
-					JSONObject meta = metaData.getJSONObject(j);
-					q.addMetaData(meta.getString("MetaKey"), meta.getString("MetaValue"));
-					
-				}
-				
-				qm.toSave.add(q);
-				
-			}
-
-			// Save to DB.
-			boolean success = qm.saveQuestionsToDB();
-
-			if (success) {
-				result.setResultCode(200);
-				ProgressInfo pi = new ProgressInfo("Show UI");
-				publishProgress(pi);
-			}
+			JSONArray quizzes = jsonResponse.getJSONArray("quiz_list");
+			loadQuizzes(quizzes);
+			
+			result.setResultCode(200);
+			ProgressInfo pi = new ProgressInfo("Show UI");
+			publishProgress(pi);		
 			
 		}catch (Exception e){
 			// We ignore this :D
 			Log.e(Application.TAG, e.getMessage(), e);
 		}
+		
+	}
+
+	private void loadQuestions(JSONArray jsonResponse) throws Exception {
+		
+		QuestionManager qm = QuestionManager.getInstance();
+		
+		qm.toSave.clear();
+		
+		for(int i=0; i<jsonResponse.length(); i++){
+			
+			JSONObject questionData = jsonResponse.getJSONObject(i);
+			
+			JSONObject question = questionData.getJSONObject("question");
+			JSONArray options = questionData.getJSONArray("options");
+			JSONArray answers = questionData.getJSONArray("answers");
+			JSONArray metaData = questionData.getJSONArray("meta");
+			
+			Question q = new Question();
+			
+			q.setId(question.getInt("ID"));
+			q.setLevel(question.getInt("Level"));
+			q.setChoiceType(question.getInt("ChoiceType"));
+			q.setQuestion(question.getString("Question"));
+			q.setCreatedAt(question.getString("CreatedAt"));
+			
+			for(int j=0; j<options.length(); j++){
+				
+				JSONObject option = options.getJSONObject(j);
+				q.addOption(option.getInt("OptionId"), option.getString("OptionValue"));
+				
+			}
+			
+			for(int j=0; j<answers.length(); j++){
+				
+				JSONObject answer = answers.getJSONObject(j);
+				q.addAnswer(answer.getInt("OptionId"));
+				
+			}
+			
+			for(int j=0; j<metaData.length(); j++){
+				
+				JSONObject meta = metaData.getJSONObject(j);
+				q.addMetaData(meta.getString("MetaKey"), meta.getString("MetaValue"));
+				
+			}
+			
+			qm.toSave.add(q);
+			
+		}
+
+		// Save Questions to db.
+		qm.saveQuestionsToDB();
+		
+	}
+
+	private void loadQuizzes(JSONArray jsonResponse) throws Exception {
+		
+		QuizManager qm = QuizManager.getInstance();
+		
+		qm.toSave.clear();
+		
+		for(int i=0; i<jsonResponse.length(); i++){
+			
+			JSONObject quizData = jsonResponse.getJSONObject(i);
+			
+			Quiz q = new Quiz();
+			
+			q.setQuizId(quizData.getInt("QuizId"));
+			q.setDescription(quizData.getString("Description"));
+			q.setLevel(quizData.getInt("Level"));
+			q.setCreatedAt(quizData.getString("CreatedAt"));
+
+			String questions = quizData.getString("QuestionIds");
+			String[] questionList = questions.split(",");
+			for(int j=0; j<questionList.length; j++){
+				q.addQuestion(Integer.valueOf(questionList[j]));
+			}
+			
+			qm.toSave.add(q);
+			
+		}
+		
+		// Save Quizzes to db.
+		qm.saveQuizToDB();
 		
 	}
 }

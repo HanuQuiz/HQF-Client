@@ -1,6 +1,7 @@
 package org.varunverma.hanuquiz;
 
 import org.varunverma.CommandExecuter.Invoker;
+import org.varunverma.CommandExecuter.MultiCommand;
 import org.varunverma.CommandExecuter.ProgressInfo;
 import org.varunverma.CommandExecuter.ResultObject;
 
@@ -37,7 +38,8 @@ public abstract class HanuGCMIntentService extends GCMBaseIntentService implemen
 		if(from.contentEquals("492119277184")){
 			
 			if(message.contentEquals("PerformSync")){
-
+				// Perform Sync
+				return performSync();
 			}
 			
 			if(message.contentEquals("RegisterDevice")){
@@ -53,6 +55,22 @@ public abstract class HanuGCMIntentService extends GCMBaseIntentService implemen
 		
 	}
 	
+	private ResultObject performSync() {
+
+		MultiCommand command = new MultiCommand(this);
+			
+		FetchArtifactsCommand fetchArtifacts = new FetchArtifactsCommand(this);
+		command.addCommand(fetchArtifacts);
+		
+		DownloadQuestionsCommand downloadQuestions = new DownloadQuestionsCommand(this);
+		command.addCommand(downloadQuestions);
+		
+		DownloadQuizCommand downloadQuiz = new DownloadQuizCommand(this);
+		command.addCommand(downloadQuiz);
+		
+		return command.execute();
+	}
+
 	@Override
 	protected void onRegistered(Context context, String regId) {
 		/*
