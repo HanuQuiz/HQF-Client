@@ -46,7 +46,7 @@ public class SaveRegIdCommand extends Command {
 			
 			// Create a new HttpClient and Post Header  
 			HttpClient httpclient = new DefaultHttpClient();
-			String url = "http://hanu-droid.varunverma.org/Applications/RegisterDevice.php";
+			String url = "http://varunverma.org/HanuGCM/RegisterDevice.php";
 			HttpPost httppost = new HttpPost(url);
 			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);  
