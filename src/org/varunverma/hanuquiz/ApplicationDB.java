@@ -422,7 +422,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		HashMap<Integer,String> userAnswers = new HashMap<Integer,String>();
 		
 		/*
-		 * TODO - Pramodh to read the User Answers table
+		 * Read the User Answers table
 		 * Then populate the hash map and return
 		 */
 		

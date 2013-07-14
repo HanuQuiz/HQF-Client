@@ -162,7 +162,7 @@ public class Quiz {
 			userAnswers = Appdb.getUserAnswers(quizId, questionIds);
 			
 			/*
-			 * TODO - Pramodh to set the users answers
+			 * Set the users answers
 			 * Loop on questionList, get the answer from userAnswers
 			 * Call the method updateMyAnswer of Question Object
 			 */
@@ -257,7 +257,6 @@ public class Quiz {
 	public void evaluateQuiz(){
 		
 		/*
-		 * TODO - Pramodh to evaluate quiz
 		 * Evaluate means that user has completed the quiz
 		 * and wants to see his score
 		 * Loop on all questions and check if the answer is correct or not
@@ -344,7 +343,6 @@ public class Quiz {
 
 	public void pause() {
 		/*
-		 * TODO - Pramodh - to pause the quiz
 		 * If this method is called then the user wants to stop the quiz
 		 * Set the status as Paused in object and in DB
 		 */
