@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 public class Question {
 
@@ -236,10 +237,56 @@ public class Question {
 	private void deleteQuestion(){
 		
 		/*
-		 * TODO - Pramodh to delete question and its related data
 		 * Delete Question, Option, Answers, MetaData
 		 * DO NOT delete other stuff.
 		 */
+		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
+		
+		// - Question Table
+		DBContentValues QuestData = new DBContentValues();
+		QuestData.TableName = ApplicationDB.QuestionsTable;
+		QuestData.Content = new ContentValues();
+		QuestData.where = "ID = " + id;
+		
+		QuestData.dbOperation = DBContentValues.DBOperation.DELETE;
+		transactionData.add(QuestData);
+		
+		// - Options Table
+		DBContentValues OptionsData = new DBContentValues();
+		OptionsData.TableName = ApplicationDB.OptionsTable;
+		OptionsData.Content = new ContentValues();
+		OptionsData.where = "QuestionId = " + id;
+		
+		OptionsData.dbOperation = DBContentValues.DBOperation.DELETE;
+		transactionData.add(OptionsData);
+		
+		// - Answers Table
+		DBContentValues AnswersData = new DBContentValues();
+		AnswersData.TableName = ApplicationDB.AnswersTable;
+		AnswersData.Content = new ContentValues();
+		AnswersData.where = "QuestionId = " + id;
+				
+		AnswersData.dbOperation = DBContentValues.DBOperation.DELETE;
+		transactionData.add(AnswersData);
+		
+		// - MetaData Table
+		DBContentValues MetaData = new DBContentValues();
+		MetaData.TableName = ApplicationDB.MetaDataTable;
+		MetaData.Content = new ContentValues();
+		MetaData.where = "QuestionId = " + id;
+				
+		MetaData.dbOperation = DBContentValues.DBOperation.DELETE;
+		transactionData.add(MetaData);
+
+try {
+		ApplicationDB Appdb = ApplicationDB.getInstance();
+		Appdb.executeDBTransaction(transactionData);
+
+	} catch (Exception e) {
+		Log.e(Application.TAG, e.getMessage(), e);
+	}
+		
+		
 		
 	}
 	
@@ -251,7 +298,6 @@ public class Question {
 	boolean evaluateQuestion(){
 		
 		/*
-		 * TODO - Pramodh to evaluate Question
 		 * The users answer is available as an attribute
 		 * Compare with the correct answers and evaluate
 		 * If correct then return true, else false
