@@ -103,7 +103,10 @@ public class DownloadQuizCommand extends Command {
 		
 		for(int i=0; i<jsonResponse.length(); i++){
 			
-			JSONObject quizData = jsonResponse.getJSONObject(i);
+			JSONObject jsonData = jsonResponse.getJSONObject(i);
+			
+			JSONObject quizData = jsonData.getJSONObject("quiz");
+			JSONArray metaData = jsonData.getJSONArray("meta");
 			
 			Quiz q = new Quiz();
 			
@@ -118,6 +121,13 @@ public class DownloadQuizCommand extends Command {
 				q.addQuestion(Integer.valueOf(questionList[j]));
 			}
 			
+			for (int j = 0; j < metaData.length(); j++) {
+
+				JSONObject meta = metaData.getJSONObject(j);
+				q.addMetaData(meta.getString("MetaKey"),meta.getString("MetaValue"));
+
+			}
+
 			qm.toSave.add(q);
 			
 		}

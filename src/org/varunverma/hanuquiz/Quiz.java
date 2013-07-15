@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import android.util.Log;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 public class Quiz {
 
@@ -27,6 +27,8 @@ public class Quiz {
 	private String description;
 	private QuizStatus status;
 	private String createdAt;
+	private List<String> syncTags;
+	private List<String> tags;
 	private List<Integer> questions;		// List of Question Ids
 	private List<Question> questionsList;	// List of Questions
 	
@@ -38,6 +40,8 @@ public class Quiz {
 		questions = new ArrayList<Integer>();
 		questionsList = new ArrayList<Question>();
 		createdAt = description = "";
+		tags = new ArrayList<String>();
+		syncTags = new ArrayList<String>();
 	}
 	
 	@Override
@@ -130,6 +134,33 @@ public class Quiz {
 	public int getCount() {	
 		return questions.size();
 	}
+	
+	public List<String> getSyncTags(){
+		return syncTags;
+	}
+	
+	/**
+	 * @param add the metaData to set
+	 */
+	void addMetaData(String key, String value) {
+		
+		if(key.contentEquals("sync")){
+			syncTags.add(value);
+		}
+		
+		if(key.contentEquals("tag")){
+			tags.add(value);
+		}
+		
+	}
+	
+	/**
+	 * @return the Tags
+	 */
+	public List<String> getTags() {
+		return tags;
+	}
+	
 	/**
 	 * @return the questions
 	 */
@@ -207,6 +238,11 @@ public class Quiz {
 		
 		ApplicationDB Appdb = ApplicationDB.getInstance();
 		
+		// Check if question exists. If so, delete it and then re-insert
+		if (Appdb.checkQuizExists(quizId)) {
+			deleteQuiz();
+		}
+		
 		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
 		DBContentValues QuizData = new DBContentValues();
 		
@@ -231,18 +267,48 @@ public class Quiz {
 		 }
 		
 		QuizData.Content.put("QuestionIds", questionids);
-		
-		if(Appdb.checkQuizExists(quizId)){
-			// Update the Quiz
-			QuizData.dbOperation = DBContentValues.DBOperation.UPDATE;
-			QuizData.where = "ID='" + quizId + "'";
-		}
-		else{
-			// Insert new entry
-			QuizData.dbOperation = DBContentValues.DBOperation.INSERT;
-		}
-		
+
+		QuizData.dbOperation = DBContentValues.DBOperation.INSERT;
+
 		transactionData.add(QuizData);
+		
+		// -- Save Tags (Metadata) --
+		Iterator<String> iter_tag = tags.iterator();
+
+		while (iter_tag.hasNext()) {
+
+			DBContentValues MetaData = new DBContentValues();
+			MetaData.TableName = ApplicationDB.QuizMetaDataTable;
+			MetaData.Content = new ContentValues();
+
+			String tag = (String) iter_tag.next();
+			MetaData.Content.put("QuizId", quizId);
+			MetaData.Content.put("MetaKey", "tag");
+			MetaData.Content.put("MetaValue", tag);
+
+			MetaData.dbOperation = DBContentValues.DBOperation.INSERT;
+			transactionData.add(MetaData);
+
+		}
+		
+		// Save Sync Meta Data
+		iter_tag = syncTags.iterator();
+
+		while (iter_tag.hasNext()) {
+
+			DBContentValues MetaData = new DBContentValues();
+			MetaData.TableName = ApplicationDB.QuizMetaDataTable;
+			MetaData.Content = new ContentValues();
+
+			String tag = (String) iter_tag.next();
+			MetaData.Content.put("QuizId", quizId);
+			MetaData.Content.put("MetaKey", "sync");
+			MetaData.Content.put("MetaValue", tag);
+
+			MetaData.dbOperation = DBContentValues.DBOperation.INSERT;
+			transactionData.add(MetaData);
+
+		}
 		
 		try {
 			
@@ -254,6 +320,39 @@ public class Quiz {
 		
 	}
 	
+	private void deleteQuiz() {
+		
+		/*
+		 * Delete Quiz, MetaData
+		 * DO NOT delete other stuff.
+		 */
+		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
+		
+		DBContentValues QuestData = new DBContentValues();
+		QuestData.TableName = ApplicationDB.QuizTable;
+		QuestData.Content = new ContentValues();
+		QuestData.where = "ID = " + quizId;
+		QuestData.dbOperation = DBContentValues.DBOperation.DELETE;
+		transactionData.add(QuestData);
+		
+		// - MetaData Table
+		DBContentValues MetaData = new DBContentValues();
+		MetaData.TableName = ApplicationDB.QuizMetaDataTable;
+		MetaData.Content = new ContentValues();
+		MetaData.where = "QuizId = " + quizId;
+		MetaData.dbOperation = DBContentValues.DBOperation.DELETE;
+		transactionData.add(MetaData);
+		
+		try {
+			ApplicationDB Appdb = ApplicationDB.getInstance();
+			Appdb.executeDBTransaction(transactionData);
+
+		} catch (Exception e) {
+			Log.e(Application.TAG, e.getMessage(), e);
+		}
+		
+	}
+
 	public void evaluateQuiz(){
 		
 		/*

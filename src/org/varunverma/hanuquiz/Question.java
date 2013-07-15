@@ -203,7 +203,7 @@ public class Question {
 		while (iter_tag.hasNext()) {
 			
 			DBContentValues MetaData = new DBContentValues();
-			MetaData.TableName = ApplicationDB.MetaDataTable;
+			MetaData.TableName = ApplicationDB.QuestionMetaDataTable;
 			MetaData.Content = new ContentValues();
 			
 			String tag = (String) iter_tag.next();
@@ -271,22 +271,20 @@ public class Question {
 		
 		// - MetaData Table
 		DBContentValues MetaData = new DBContentValues();
-		MetaData.TableName = ApplicationDB.MetaDataTable;
+		MetaData.TableName = ApplicationDB.QuestionMetaDataTable;
 		MetaData.Content = new ContentValues();
 		MetaData.where = "QuestionId = " + id;
 				
 		MetaData.dbOperation = DBContentValues.DBOperation.DELETE;
 		transactionData.add(MetaData);
 
-try {
-		ApplicationDB Appdb = ApplicationDB.getInstance();
-		Appdb.executeDBTransaction(transactionData);
+		try {
+			ApplicationDB Appdb = ApplicationDB.getInstance();
+			Appdb.executeDBTransaction(transactionData);
 
-	} catch (Exception e) {
-		Log.e(Application.TAG, e.getMessage(), e);
-	}
-		
-		
+		} catch (Exception e) {
+			Log.e(Application.TAG, e.getMessage(), e);
+		}
 		
 	}
 	

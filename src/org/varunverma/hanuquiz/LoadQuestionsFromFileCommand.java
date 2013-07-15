@@ -130,6 +130,7 @@ public class LoadQuestionsFromFileCommand extends Command {
 		for(int i=0; i<jsonResponse.length(); i++){
 			
 			JSONObject quizData = jsonResponse.getJSONObject(i);
+			JSONArray metaData = quizData.getJSONArray("meta");
 			
 			Quiz q = new Quiz();
 			
@@ -142,6 +143,13 @@ public class LoadQuestionsFromFileCommand extends Command {
 			String[] questionList = questions.split(",");
 			for(int j=0; j<questionList.length; j++){
 				q.addQuestion(Integer.valueOf(questionList[j]));
+			}
+			
+			for (int j = 0; j < metaData.length(); j++) {
+
+				JSONObject meta = metaData.getJSONObject(j);
+				q.addMetaData(meta.getString("MetaKey"),meta.getString("MetaValue"));
+
 			}
 			
 			qm.toSave.add(q);

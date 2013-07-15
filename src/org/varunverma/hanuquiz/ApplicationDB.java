@@ -26,7 +26,8 @@ public class ApplicationDB extends SQLiteOpenHelper{
 	static final String QuestionsTable = "Questions";
 	static final String OptionsTable = "Options";
 	static final String AnswersTable = "Answers";
-	static final String MetaDataTable = "MetaData";
+	static final String QuestionMetaDataTable = "QuestionMetaData";
+	static final String QuizMetaDataTable = "QuizMetaData";
 	static final String MyAnswersTable = "MyAnswers";
 
 	private SQLiteDatabase data_base;
@@ -91,8 +92,14 @@ public class ApplicationDB extends SQLiteOpenHelper{
 				"OptionValue VARCHAR(20) " + 			// Option Value
 				")";
 		
-		String createQuestionsMetaTable = "CREATE TABLE " + MetaDataTable + " (" + 
+		String createQuestionsMetaTable = "CREATE TABLE " + QuestionMetaDataTable + " (" + 
 				"QuestionId INT, " + 		// Question ID
+				"MetaKey VARCHAR(20), " + 			// Meta Key
+				"MetaValue VARCHAR(20) " + 			// Meta Value
+				")";
+		
+		String createQuizMetaTable = "CREATE TABLE " + QuizMetaDataTable + " (" + 
+				"QuizId INT, " + 		// Question ID
 				"MetaKey VARCHAR(20), " + 			// Meta Key
 				"MetaValue VARCHAR(20) " + 			// Meta Value
 				")";
@@ -126,6 +133,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 			db.execSQL(createOptionsTable);
 			db.execSQL(createQuestionsMetaTable);
 			db.execSQL(createQuizTable);
+			db.execSQL(createQuizMetaTable);
 			db.execSQL(createSettingsTable);
 			db.execSQL(createMyAnswersTable);			
 						
@@ -269,6 +277,10 @@ public class ApplicationDB extends SQLiteOpenHelper{
 				} while (index > 0);
 
 				qmgr.addQuizToList(quiz_obj);
+				
+				// Load Quiz Meta Data
+				loadQuizMetaData(quiz_obj);
+				
 				quiz_obj = null; // Removing object properties, since we're in loop
 
 			} while (qCursor.moveToNext());
@@ -277,8 +289,29 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		qCursor.close();
 			
 	}		
-
 	
+	private void loadQuizMetaData(Quiz quiz) {
+		
+		String selection = "QuizId='" + quiz.getQuizId() + "'";
+		
+		String metaKey, metaValue;
+		Cursor mCursor = data_base.query(QuizMetaDataTable, null, selection, null, null, null, null);
+		
+		if (mCursor.moveToFirst()) {
+
+			do {
+				
+				metaKey = mCursor.getString(mCursor.getColumnIndex("MetaKey"));
+				metaValue = mCursor.getString(mCursor.getColumnIndex("MetaValue"));
+				quiz.addMetaData(metaKey, metaValue);
+				
+			} while (mCursor.moveToNext());
+		}
+
+		mCursor.close();
+		
+	}
+
 	synchronized List<Question> getQuestionsByIds(String questionIds){
 		
 		// questionIds is CSV
@@ -341,7 +374,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		
 		// Select Meta Data
 		String metaKey, metaValue;
-		Cursor mCursor = data_base.query(MetaDataTable, null, selection, null, null, null, null);
+		Cursor mCursor = data_base.query(QuestionMetaDataTable, null, selection, null, null, null, null);
 		if (mCursor.moveToFirst()) {
 
 			do {
