@@ -91,6 +91,7 @@ public class Application {
 			PackageManager pm = context.getPackageManager();
 			appName = (String) pm.getApplicationLabel(ai);
 			appName = appName.replaceAll(" ", "");
+			TAG = appName;
 			
 		}
 		
