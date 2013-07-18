@@ -482,7 +482,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 	boolean checkQuestionExists(int questionID) {
 		
 		String[] columns = {"ID"};
-		String selection = "ID='" + questionID + "'";
+		String selection = "ID=" + questionID ;
 		
 		Cursor cursor = data_base.query(QuestionsTable, columns, selection, null, null, null, null);
 		
@@ -501,7 +501,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 	boolean checkQuizExists(int quizId) {
 		
 		String[] columns = {"ID"};
-		String selection = "ID='" + quizId + "'";
+		String selection = "ID=" + quizId ;
 		
 		Cursor cursor = data_base.query(QuizTable, columns, selection, null, null, null, null);
 		

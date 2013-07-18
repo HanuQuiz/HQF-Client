@@ -396,6 +396,7 @@ public class Quiz {
 
 		QuizTable.dbOperation = DBContentValues.DBOperation.UPDATE;
 		transactionData.add(QuizTable);
+		
 
 		/*
 		 * Update MyAnswers table --
@@ -406,7 +407,7 @@ public class Quiz {
 		deleteAnswers.dbOperation = DBContentValues.DBOperation.DELETE;
 		deleteAnswers.where = "QuizId = '" + quizId + "'";
 		transactionData.add(deleteAnswers);
-
+		
 		Iterator<Question> Iter = questionsList.iterator();
 
 		if (Iter.hasNext()) {
@@ -417,7 +418,7 @@ public class Quiz {
 
 				MyAnsTable.Content = new ContentValues();
 				Question quest = new Question();
-
+				
 				quest = Iter.next();
 				MyAnsTable.Content.put("QuizId", quizId);
 				MyAnsTable.Content.put("QuestionId", quest.getId());
@@ -426,9 +427,11 @@ public class Quiz {
 
 				transactionData.add(MyAnsTable);
 				
+				
 			} while (Iter.hasNext());
 		}
-
+		
+		
 		try {
 
 			Appdb.executeDBTransaction(transactionData);

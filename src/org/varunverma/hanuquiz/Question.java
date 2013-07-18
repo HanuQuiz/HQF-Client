@@ -29,6 +29,11 @@ public class Question {
 		myAnswer = "";
 	}
 	
+	@Override
+	public String toString(){
+		return String.valueOf(id) + "/" + question;
+	}
+	
 	/**
 	 * @return the id
 	 */
