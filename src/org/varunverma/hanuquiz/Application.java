@@ -12,6 +12,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.DatabaseUtils;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -33,6 +34,7 @@ public class Application {
 	
 	private static Application application;
 	private CommandExecuter ce;
+	private static final int VersionCode = 1;
 	
 	public static String TAG, appName;
 	
@@ -306,6 +308,47 @@ public class Application {
 	public void setSyncCategory(String syncCategory) {
 		
 		Settings.put("SyncTag", syncCategory);
+		
+	}
+
+	public int getOldFrameworkVersion() {
+		
+		String versionCode = Settings.get("HanuVersionCode");
+		if(versionCode == null || versionCode.contentEquals("")){
+			versionCode = "0";
+		}
+		return Integer.valueOf(versionCode);
+	}
+
+	public int getNewFrameworkVersion() {
+		return VersionCode;
+	}
+
+	public int getOldAppVersion() {
+		
+		String versionCode = Settings.get("AppVersionCode");
+		if(versionCode == null || versionCode.contentEquals("")){
+			versionCode = "0";
+		}
+		return Integer.valueOf(versionCode);
+	}
+
+	public void updateVersion() {
+		
+		// Update Version Since version is updated. We have to register again !
+		addParameter("RegistrationId", ""); // Set Reg Id to space.
+		GCMRegistrar.unregister(context);
+		GCMRegistrar.register(context, SenderId);
+
+		int version;
+		try {
+			version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
+		} catch (NameNotFoundException e) {
+			version = 0;
+			Log.e(TAG, e.getMessage(), e);
+		}
+		addParameter("HanuVersionCode", String.valueOf(VersionCode));
+		addParameter("AppVersionCode", String.valueOf(version));
 		
 	}
 

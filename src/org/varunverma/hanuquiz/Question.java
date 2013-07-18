@@ -145,11 +145,6 @@ public class Question {
 			
 		ApplicationDB Appdb = ApplicationDB.getInstance();
 		
-		// Check if question exists. If so, delete it and then re-insert
-		if(Appdb.checkQuestionExists(id)){
-			deleteQuestion();
-		}
-
 		// -- Save Question Table --
 		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
 		DBContentValues QuestionData = new DBContentValues();
@@ -161,7 +156,16 @@ public class Question {
 		QuestionData.Content.put("Level", level);
 		QuestionData.Content.put("Choice", choiceType);
 		QuestionData.Content.put("CreatedAt", createdAt);
-		QuestionData.dbOperation = DBContentValues.DBOperation.INSERT;
+		
+		// Check if question exists. If so, delete it and then re-insert
+		if (Appdb.checkQuestionExists(id)) {
+			prepareForUpdate();
+			QuestionData.dbOperation = DBContentValues.DBOperation.UPDATE;
+		}
+		else{
+			QuestionData.dbOperation = DBContentValues.DBOperation.INSERT;
+		}
+		
 		transactionData.add(QuestionData);
 
 		// -- Save Options Table --
@@ -239,23 +243,14 @@ public class Question {
 		
 	}
 	
-	private void deleteQuestion(){
+	private void prepareForUpdate(){
 		
 		/*
-		 * Delete Question, Option, Answers, MetaData
+		 * Delete Option, Answers, MetaData
 		 * DO NOT delete other stuff.
 		 */
 		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
-		
-		// - Question Table
-		DBContentValues QuestData = new DBContentValues();
-		QuestData.TableName = ApplicationDB.QuestionsTable;
-		QuestData.Content = new ContentValues();
-		QuestData.where = "ID = " + id;
-		
-		QuestData.dbOperation = DBContentValues.DBOperation.DELETE;
-		transactionData.add(QuestData);
-		
+			
 		// - Options Table
 		DBContentValues OptionsData = new DBContentValues();
 		OptionsData.TableName = ApplicationDB.OptionsTable;

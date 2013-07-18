@@ -238,11 +238,6 @@ public class Quiz {
 		
 		ApplicationDB Appdb = ApplicationDB.getInstance();
 		
-		// Check if question exists. If so, delete it and then re-insert
-		if (Appdb.checkQuizExists(quizId)) {
-			deleteQuiz();
-		}
-		
 		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
 		DBContentValues QuizData = new DBContentValues();
 		
@@ -267,8 +262,15 @@ public class Quiz {
 		 }
 		
 		QuizData.Content.put("QuestionIds", questionids);
-
-		QuizData.dbOperation = DBContentValues.DBOperation.INSERT;
+		
+		// Check if question exists. If so, delete it and then re-insert
+		if (Appdb.checkQuizExists(quizId)) {
+			prepareForUpdate();
+			QuizData.dbOperation = DBContentValues.DBOperation.UPDATE;
+		}
+		else{
+			QuizData.dbOperation = DBContentValues.DBOperation.INSERT;
+		}
 
 		transactionData.add(QuizData);
 		
@@ -320,20 +322,13 @@ public class Quiz {
 		
 	}
 	
-	private void deleteQuiz() {
+	private void prepareForUpdate() {
 		
 		/*
-		 * Delete Quiz, MetaData
+		 * Delete  MetaData
 		 * DO NOT delete other stuff.
 		 */
 		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
-		
-		DBContentValues QuestData = new DBContentValues();
-		QuestData.TableName = ApplicationDB.QuizTable;
-		QuestData.Content = new ContentValues();
-		QuestData.where = "ID = " + quizId;
-		QuestData.dbOperation = DBContentValues.DBOperation.DELETE;
-		transactionData.add(QuestData);
 		
 		// - MetaData Table
 		DBContentValues MetaData = new DBContentValues();
