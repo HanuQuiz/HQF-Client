@@ -267,6 +267,8 @@ public class Quiz {
 		if (Appdb.checkQuizExists(quizId)) {
 			prepareForUpdate();
 			QuizData.dbOperation = DBContentValues.DBOperation.UPDATE;
+			QuizData.where = "ID=" + String.valueOf(quizId);
+			QuizData.Content.remove("ID");
 		}
 		else{
 			QuizData.dbOperation = DBContentValues.DBOperation.INSERT;

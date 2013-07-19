@@ -129,8 +129,10 @@ public class LoadQuestionsFromFileCommand extends Command {
 		
 		for(int i=0; i<jsonResponse.length(); i++){
 			
-			JSONObject quizData = jsonResponse.getJSONObject(i);
-			JSONArray metaData = quizData.getJSONArray("meta");
+			JSONObject jsonData = jsonResponse.getJSONObject(i);
+			
+			JSONObject quizData = jsonData.getJSONObject("quiz");
+			JSONArray metaData = jsonData.getJSONArray("meta");
 			
 			Quiz q = new Quiz();
 			

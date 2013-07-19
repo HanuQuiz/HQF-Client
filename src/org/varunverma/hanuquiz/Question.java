@@ -160,6 +160,8 @@ public class Question {
 		// Check if question exists. If so, delete it and then re-insert
 		if (Appdb.checkQuestionExists(id)) {
 			prepareForUpdate();
+			QuestionData.where = "ID=" + String.valueOf(id);
+			QuestionData.Content.remove("ID");
 			QuestionData.dbOperation = DBContentValues.DBOperation.UPDATE;
 		}
 		else{

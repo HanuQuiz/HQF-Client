@@ -42,6 +42,13 @@ public abstract class HanuGCMIntentService extends GCMBaseIntentService implemen
 				return performSync();
 			}
 			
+			if(message.contentEquals("SyncAll")){
+				Log.v(Application.TAG, "Message to Perform Sync-All recieved from GCM");
+				Application.getApplicationInstance().getSettings().put("LastQuestionsSyncTime", "1349328720");
+				Application.getApplicationInstance().getSettings().put("LastQuizSyncTime", "1349328720");
+				return performSync();
+			}
+			
 			if(message.contentEquals("RegisterDevice")){
 				// Register Device Again Remove parameters
 				app.removeParameter("RegistrationId");
