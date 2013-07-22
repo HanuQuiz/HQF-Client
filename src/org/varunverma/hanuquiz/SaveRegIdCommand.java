@@ -65,7 +65,7 @@ public class SaveRegIdCommand extends Command {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 			String line = reader.readLine();
 			
-			if(line.toString().contentEquals("Success")){
+			if(line != null && line.toString().contentEquals("Success")){
 				// Success
 				app.addParameter("RegistrationStatus", "Success");
 				Log.v(Application.TAG, "GCM RegId saved successfully on our server");
