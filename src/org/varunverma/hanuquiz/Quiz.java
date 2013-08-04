@@ -470,4 +470,13 @@ public class Quiz {
 				
 	}
 	
+	public void resetStatus(){
+		/*
+		 * TODO - Pramodh
+		 * Pramodh to reset the quiz status. Do the following
+		 * a) Delete all the user answers stored for this quiz
+		 * b) Reset the status to new
+		 */
+	}
+	
 }

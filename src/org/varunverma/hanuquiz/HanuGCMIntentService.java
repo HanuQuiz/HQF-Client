@@ -39,11 +39,12 @@ public abstract class HanuGCMIntentService extends GCMBaseIntentService implemen
 			
 			if(message.contentEquals("PerformSync")){
 				// Perform Sync
+				Log.i(Application.TAG, "Message to Perform Sync recieved from GCM");
 				return performSync();
 			}
 			
 			if(message.contentEquals("SyncAll")){
-				Log.v(Application.TAG, "Message to Perform Sync-All recieved from GCM");
+				Log.i(Application.TAG, "Message to Perform Sync-All recieved from GCM");
 				Application.getApplicationInstance().getSettings().put("LastQuestionsSyncTime", "1349328720");
 				Application.getApplicationInstance().getSettings().put("LastQuizSyncTime", "1349328720");
 				return performSync();

@@ -78,6 +78,9 @@ public class FetchArtifactsCommand extends Command {
 		questionsSyncTime = df.format(questionSyncDate);
 		quizSyncTime = df.format(quizSyncDate);
 		
+		Log.i(Application.TAG, "Last Question Sync done at (GMT): " + questionsSyncTime);
+		Log.i(Application.TAG, "Last Quiz Sync done at (GMT): " + quizSyncTime);
+		
 		InputStream is;
 		InputStreamReader isr;
 		

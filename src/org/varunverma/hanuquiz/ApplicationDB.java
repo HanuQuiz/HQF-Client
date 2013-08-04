@@ -211,6 +211,8 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		String ParamName, ParamValue;
 		Cursor SettingsCursor = data_base.query(SettingsTable, null, null, null, null, null, null);
 		if (SettingsCursor.moveToFirst()) {
+			
+			Log.i(Application.TAG, SettingsCursor.getCount() + " settings loaded");
 
 			do {
 				ParamName = SettingsCursor.getString(SettingsCursor.getColumnIndex("ParamName"));
@@ -219,7 +221,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 				
 			} while (SettingsCursor.moveToNext());
 		}
-
+		
 		SettingsCursor.close();
 		
 	}

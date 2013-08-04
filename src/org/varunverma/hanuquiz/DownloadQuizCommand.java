@@ -46,6 +46,7 @@ public class DownloadQuizCommand extends Command {
 		qm = QuizManager.getInstance();
 		
 		if(qm.toDownload.isEmpty()){
+			Log.i(Application.TAG, "Nothing to download in Quizzes");
 			return;
 		}
 		

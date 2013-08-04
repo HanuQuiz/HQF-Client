@@ -46,6 +46,7 @@ public class DownloadQuestionsCommand extends Command {
 		qm = QuestionManager.getInstance();
 		
 		if(qm.toDownload.isEmpty()){
+			Log.i(Application.TAG, "Nothing to download in Questions");
 			return;
 		}
 		
