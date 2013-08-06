@@ -34,7 +34,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 	
 	static ApplicationDB getInstance(Context context){
 		
-		DBVersion = 1;
+		DBVersion = 2;
 		
 		String appName = Application.appName;
 		DBName = "HQ_" + appName + "_DB";
@@ -146,9 +146,51 @@ public class ApplicationDB extends SQLiteOpenHelper{
 	}
 
 	@Override
-	public void onUpgrade(SQLiteDatabase db, int arg1, int arg2) {
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// Nothing to do
+		switch(oldVersion){
 		
+		case 1:
+			/*
+			 * This is a dummy (technical) upgrade. No real changes are
+			 * done in the table schemas.
+			 *  
+			 * This code is added due to a bug until version 5(1.0.3)
+			 * Due to the bug, the settings were re-inserted in DB 
+			 * every time the app was launched. 
+			 * As a result, we had too many entries in the DB table...
+			 * and poor performance on the launch of app.
+			 * 
+			 * This code will consolidate settings. Notice that we are
+			 * selecting only distinct values
+			 */
+			
+			String settingsBackup = "CREATE TABLE SETTINGSBACKUP AS SELECT * FROM " + SettingsTable + ";";
+			String dropSettings = "DROP TABLE " + SettingsTable + ";";
+			String createSettings = "CREATE TABLE " + SettingsTable + " AS SELECT DISTINCT * FROM SETTINGSBACKUP;";
+			String dropBackup = "DROP TABLE SETTINGSBACKUP;";
+			
+			try {
+				// Upgrading database to version 2
+				Log.i(Application.TAG, "Upgrading DB from version 1 to 2");
+					
+				db.execSQL(settingsBackup);
+				db.execSQL(dropSettings);			
+				db.execSQL(createSettings);
+				db.execSQL(dropBackup);		
+							
+				Log.i(Application.TAG, "Upgrade successfully");
+
+			} catch (SQLException e) {
+				// Oops !!
+				Log.e(Application.TAG, e.getMessage(), e);
+			}
+			
+			/*
+			 * Very important - No break statement here !
+			 */
+		
+		}
 	}
 	
 	void openDBForWriting(){
@@ -204,10 +246,9 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		/* 
 		 * Select from Settings table and load into memory.
 		 * Populate the Application->Settings attribute
-		 * 
 		 */
 		
-		Application App = Application.getApplicationInstance();
+		Application app = Application.getApplicationInstance();
 		String ParamName, ParamValue;
 		Cursor SettingsCursor = data_base.query(SettingsTable, null, null, null, null, null, null);
 		if (SettingsCursor.moveToFirst()) {
@@ -217,7 +258,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 			do {
 				ParamName = SettingsCursor.getString(SettingsCursor.getColumnIndex("ParamName"));
 				ParamValue = SettingsCursor.getString(SettingsCursor.getColumnIndex("ParamValue"));
-				App.addParameter(ParamName, ParamValue);
+				app.Settings.put(ParamName, ParamValue);
 				
 			} while (SettingsCursor.moveToNext());
 		}
