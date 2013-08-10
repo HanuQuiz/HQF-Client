@@ -477,6 +477,36 @@ public class Quiz {
 		 * a) Delete all the user answers stored for this quiz
 		 * b) Reset the status to new
 		 */
+		
+	// Delete all answers for current quiz
+		ApplicationDB Appdb = ApplicationDB.getInstance();
+		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
+		
+		DBContentValues deleteAnswers = new DBContentValues();
+		
+		deleteAnswers.TableName = ApplicationDB.MyAnswersTable;
+		deleteAnswers.dbOperation = DBContentValues.DBOperation.DELETE;
+		deleteAnswers.where = "QuizId = '" + quizId + "'";
+		transactionData.add(deleteAnswers);
+		
+		DBContentValues QuizTable = new DBContentValues();
+		QuizTable.TableName = ApplicationDB.QuizTable;
+		QuizTable.Content = new ContentValues();
+		QuizTable.Content.put("Status", QuizStatus.NotStarted.toString());
+		QuizTable.where = "ID = '" + quizId + "'";
+		QuizTable.dbOperation = DBContentValues.DBOperation.UPDATE;
+		transactionData.add(QuizTable);
+		
+
+		setStatus(Quiz.QuizStatus.NotStarted); //Reset to "not started" !
+		
+		try {
+
+			Appdb.executeDBTransaction(transactionData);
+		} catch (Exception e) {
+			Log.e(Application.TAG, e.getMessage(), e);
+		}
+		
 	}
 	
 }
