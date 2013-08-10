@@ -393,12 +393,32 @@ public class Quiz {
 
 		QuizTable.dbOperation = DBContentValues.DBOperation.UPDATE;
 		transactionData.add(QuizTable);
-		
 
+		/*
+		 * Update MyAnswers table --
+		 */
+		transactionData.addAll(saveUserAnswers());
+
+		try {
+
+			Appdb.executeDBTransaction(transactionData);
+			setStatus(Quiz.QuizStatus.Completed);
+
+		} catch (Exception e) {
+			Log.e(Application.TAG, e.getMessage(), e);
+		}
+		
+	}
+	
+	private List<DBContentValues> saveUserAnswers(){
+		
 		/*
 		 * Update MyAnswers table --
 		 * Delete old answers and insert new ones
 		 */
+		
+		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
+		
 		DBContentValues deleteAnswers = new DBContentValues();
 		deleteAnswers.TableName = ApplicationDB.MyAnswersTable;
 		deleteAnswers.dbOperation = DBContentValues.DBOperation.DELETE;
@@ -428,15 +448,7 @@ public class Quiz {
 			} while (Iter.hasNext());
 		}
 		
-		
-		try {
-
-			Appdb.executeDBTransaction(transactionData);
-			setStatus(Quiz.QuizStatus.Completed);
-
-		} catch (Exception e) {
-			Log.e(Application.TAG, e.getMessage(), e);
-		}
+		return transactionData;
 		
 	}
 
@@ -462,6 +474,9 @@ public class Quiz {
 		QuizTable.dbOperation = DBContentValues.DBOperation.UPDATE;
 		transactionData.add(QuizTable);
 		
+		// While pausing, save user answers.
+		transactionData.addAll(saveUserAnswers());
+		
 		try{
 			Appdb.executeDBTransaction(transactionData);
 		}catch (Exception e) {
@@ -471,24 +486,18 @@ public class Quiz {
 	}
 	
 	public void resetStatus(){
-		/*
-		 * TODO - Pramodh
-		 * Pramodh to reset the quiz status. Do the following
-		 * a) Delete all the user answers stored for this quiz
-		 * b) Reset the status to new
-		 */
-		
-	// Delete all answers for current quiz
+
+		// Delete all answers for current quiz
 		ApplicationDB Appdb = ApplicationDB.getInstance();
 		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
-		
+
 		DBContentValues deleteAnswers = new DBContentValues();
-		
+
 		deleteAnswers.TableName = ApplicationDB.MyAnswersTable;
 		deleteAnswers.dbOperation = DBContentValues.DBOperation.DELETE;
 		deleteAnswers.where = "QuizId = '" + quizId + "'";
 		transactionData.add(deleteAnswers);
-		
+
 		DBContentValues QuizTable = new DBContentValues();
 		QuizTable.TableName = ApplicationDB.QuizTable;
 		QuizTable.Content = new ContentValues();
@@ -496,13 +505,13 @@ public class Quiz {
 		QuizTable.where = "ID = '" + quizId + "'";
 		QuizTable.dbOperation = DBContentValues.DBOperation.UPDATE;
 		transactionData.add(QuizTable);
-		
 
-		setStatus(Quiz.QuizStatus.NotStarted); //Reset to "not started" !
-		
+		setStatus(Quiz.QuizStatus.NotStarted); // Reset to "not started" !
+
 		try {
 
 			Appdb.executeDBTransaction(transactionData);
+			
 		} catch (Exception e) {
 			Log.e(Application.TAG, e.getMessage(), e);
 		}

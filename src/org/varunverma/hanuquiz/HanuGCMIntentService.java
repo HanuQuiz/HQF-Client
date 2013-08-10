@@ -57,6 +57,7 @@ public abstract class HanuGCMIntentService extends GCMBaseIntentService implemen
 				
 				app.registerAppForGCM();
 			}
+			
 		}
 		
 		return new ResultObject();
