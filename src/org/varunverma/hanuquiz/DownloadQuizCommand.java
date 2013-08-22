@@ -140,7 +140,7 @@ public class DownloadQuizCommand extends Command {
 			
 			// If All success, then set sync time to now.
 			app.addParameter("LastQuizSyncTime", String.valueOf((new Date()).getTime() - 2*60*1000));
-			Log.v(Application.TAG, "All Questions downloaded successfully...");
+			Log.v(Application.TAG, "All Quizzes downloaded successfully...");
 			
 		}
 		else{

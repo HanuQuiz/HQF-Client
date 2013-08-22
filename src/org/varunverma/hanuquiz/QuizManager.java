@@ -63,6 +63,7 @@ public class QuizManager {
 			quizIds += "," + String.valueOf(i.next());
 		}
 		
+		//Log.i(Application.TAG, "Fetching DB artifacts for: " + quizIds);
 		HashMap<Integer, Date> dbArtifacts = ApplicationDB.getInstance().getQuizArtifacts(quizIds);
 		
 		Entry<Integer,Date> set;
@@ -79,6 +80,9 @@ public class QuizManager {
 			if(dbDate == null || date.compareTo(dbDate) > 0){
 				// DB entry is older. So we must update this.
 				toDownload.add(set.getKey());
+			}
+			else{
+				//Log.w(Application.TAG, "Entry with DB date:" + dbDate.toString() + " is removed");
 			}
 			
 		}

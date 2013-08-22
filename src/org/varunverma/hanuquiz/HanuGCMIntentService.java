@@ -23,12 +23,11 @@ public abstract class HanuGCMIntentService extends GCMBaseIntentService implemen
 
 	}
 
-	protected ResultObject processMessage(Context context, Intent intent) {
+	protected ResultObject processMessage(Intent intent) {
 		// Message received with Intent
 		
 		// Initialize the application
 		Application app = Application.getApplicationInstance();
-		app.setContext(getApplicationContext());
 		
 		String message = intent.getExtras().getString("message");
 		String from = intent.getExtras().getString("from");

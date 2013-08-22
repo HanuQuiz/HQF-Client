@@ -96,6 +96,8 @@ public class FetchArtifactsCommand extends Command {
 		JSONArray metaData = new JSONArray();
 		metaData.put(syncTags);
 		
+		//Log.i(Application.TAG, "Meta Data for Sync: " + metaData.toString());
+		
 		httppost.setHeader("Referer", "HanuQuizRocks");
 
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
@@ -124,10 +126,12 @@ public class FetchArtifactsCommand extends Command {
 		}
 
 		if(builder.toString().contentEquals("null")){
+			Log.i(Application.TAG, "Got null response from Artifacts !");
 			return;
 		}
 		
 		// Parse the result.
+		//Log.i(Application.TAG, "Response: " + builder.toString());
 		JSONObject jsonResponse = new JSONObject(builder.toString());
 		
 		int id;
@@ -158,10 +162,10 @@ public class FetchArtifactsCommand extends Command {
 		}
 		
 		// Filter Question Artifacts for download
-		Log.v(Application.TAG, "Question Artifacts fetched, will filter now...");
+		//Log.v(Application.TAG, questions.length() + " Question Artifacts fetched, will filter now...");
 		QuestionManager.getInstance().filterArtifactsForDownload(questionArtifactsList);
 		
-		Log.v(Application.TAG, "Quiz Artifacts fetched, will filter now...");
+		//Log.v(Application.TAG, quiz.length() + " Quiz Artifacts fetched, will filter now...");
 		QuizManager.getInstance().filterArtifactsForDownload(quizArtifactsList);
 	}
 
