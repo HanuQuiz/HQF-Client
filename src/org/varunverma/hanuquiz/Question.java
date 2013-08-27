@@ -311,6 +311,7 @@ public class Question {
 		
 		Iterator <Integer>Iter = answers.iterator();
 		
+		//IF user answers contains all correct answers FOUND = TRUE
 		if(Iter.hasNext())
 		{
 			do{
@@ -320,6 +321,17 @@ public class Question {
 		}
 		else found = false;
 		
+		
+		//Continue if above check was successful, additional check performed below...
+		if(found == true)
+		{
+			//IF Correct answers contain all user answers (vice versa of above) FOUND = TRUE
+			for(int i=0;i<userAnswers.length;i++)
+			{
+				if( !Arrays.asList(answers).contains(userAnswers[i]) ) found = false;
+			}
+		}
+	
 		
 		return found;
 	}
