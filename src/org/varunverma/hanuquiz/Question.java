@@ -323,14 +323,11 @@ public class Question {
 		
 		
 		//Continue if above check was successful, additional check performed below...
-		if(found == true)
+		if(found == false || userAnswers.length != answers.size() ) // Check if number of "user answers" and "correct answers" are the same 
 		{
-			//IF Correct answers contain all user answers (vice versa of above) FOUND = TRUE
-			for(int i=0;i<userAnswers.length;i++)
-			{
-				if( !Arrays.asList(answers).contains(userAnswers[i]) ) found = false;
-			}
+			found = false;
 		}
+		else found = true;
 	
 		
 		return found;
