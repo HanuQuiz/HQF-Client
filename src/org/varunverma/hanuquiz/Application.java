@@ -39,7 +39,7 @@ public class Application {
 	public static String TAG, appName;
 	
 	protected Context context;
-	String appURL;
+	protected String appURL;
 	
 	protected ApplicationDB appDB;
 	
@@ -72,8 +72,11 @@ public class Application {
 			// Build Application name
 			buildApplicationName();
 			
+			// DB Name
+			String dbName = "HQ_" + appName + "_DB";
+			
 			// Create DB Instance
-			appDB = ApplicationDB.getInstance(context);
+			appDB = ApplicationDB.getInstance(context, 2, dbName);
 			
 			// Initialize DB
 			initializeDB();
@@ -81,12 +84,12 @@ public class Application {
 		
 	}
 	
-	protected void initializeDB() {
+	protected void initializeDB(){
 		
 		appDB.openDBForWriting();
 		appDB.loadSettings();
 	}
-
+	
 	protected void buildApplicationName() {
 		// Get the application name
 		if(appName == null){

@@ -18,8 +18,6 @@ import android.util.Log;
 public class ApplicationDB extends SQLiteOpenHelper{
 
 	private static ApplicationDB appDB;
-	private static int DBVersion;
-	private static String DBName;
 	
 	static final String SettingsTable = "Settings";
 	static final String QuizTable = "Quiz";
@@ -32,15 +30,10 @@ public class ApplicationDB extends SQLiteOpenHelper{
 
 	private SQLiteDatabase data_base;
 	
-	static ApplicationDB getInstance(Context context){
-		
-		DBVersion = 2;
-		
-		String appName = Application.appName;
-		DBName = "HQ_" + appName + "_DB";
-		
+	static ApplicationDB getInstance(Context context, int dbVersion, String dbName){
+			
 		if(appDB == null){
-			appDB = new ApplicationDB(context);
+			appDB = new ApplicationDB(context, dbVersion, dbName);
 		}
 		
 		return appDB;
@@ -50,9 +43,9 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		return appDB;
 	}
 	
-	protected ApplicationDB(Context context) {
+	protected ApplicationDB(Context context, int dbVersion, String dbName) {
 		
-		super(context, DBName, null, DBVersion);
+		super(context, dbName, null, dbVersion);
 
 	}
 
@@ -126,7 +119,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		// create a new table - if not existing
 		try {
 			// Create Tables.
-			Log.i(Application.TAG, "Creating Tables for Version:" + String.valueOf(DBVersion));
+			Log.i(Application.TAG, "Creating Tables for Version:" + String.valueOf(db.getVersion()));
 				
 			db.execSQL(createQuestionsTable);
 			db.execSQL(createAnswersTable);			
