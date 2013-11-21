@@ -11,7 +11,7 @@ import android.util.Log;
 
 public class Question {
 
-	private int id, level, choiceType, point;
+	private int id, level, choiceType;
 	private String question, createdAt;
 	private HashMap<Integer,String> options;
 	private List<Integer> answers;
@@ -25,7 +25,6 @@ public class Question {
 		options = new HashMap<Integer,String>();
 		answers = new ArrayList<Integer>();
 		tags = new ArrayList<String>();
-		point = 0;
 		myAnswer = "";
 	}
 	

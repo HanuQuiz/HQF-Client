@@ -126,7 +126,7 @@ public class FetchArtifactsCommand extends Command {
 		}
 
 		if(builder.toString().contentEquals("null")){
-			Log.i(Application.TAG, "Got null response from Artifacts !");
+			//Log.i(Application.TAG, "Got null response from Artifacts !");
 			return;
 		}
 		
