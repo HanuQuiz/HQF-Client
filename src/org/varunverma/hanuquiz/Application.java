@@ -38,10 +38,10 @@ public class Application {
 	
 	public static String TAG, appName;
 	
-	Context context;
+	protected Context context;
 	String appURL;
 	
-	private ApplicationDB appDB;
+	protected ApplicationDB appDB;
 	
 	HashMap<String,String> Settings;
 
@@ -56,7 +56,7 @@ public class Application {
 		
 	}
 	
-	private Application(){
+	protected Application(){
 		
 		Settings = new HashMap<String,String>();
 		
@@ -72,20 +72,22 @@ public class Application {
 			// Build Application name
 			buildApplicationName();
 			
+			// Create DB Instance
+			appDB = ApplicationDB.getInstance(context);
+			
 			// Initialize DB
 			initializeDB();
 		}
 		
 	}
 	
-	private void initializeDB() {
+	protected void initializeDB() {
 		
-		appDB = ApplicationDB.getInstance(context);
 		appDB.openDBForWriting();
 		appDB.loadSettings();
 	}
 
-	private void buildApplicationName() {
+	protected void buildApplicationName() {
 		// Get the application name
 		if(appName == null){
 

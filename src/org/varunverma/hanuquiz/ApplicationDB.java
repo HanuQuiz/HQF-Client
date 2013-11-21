@@ -50,7 +50,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		return appDB;
 	}
 	
-	private ApplicationDB(Context context) {
+	protected ApplicationDB(Context context) {
 		
 		super(context, DBName, null, DBVersion);
 
@@ -193,7 +193,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		}
 	}
 	
-	void openDBForWriting(){
+	protected void openDBForWriting(){
 		data_base = appDB.getWritableDatabase();
  	}
 
