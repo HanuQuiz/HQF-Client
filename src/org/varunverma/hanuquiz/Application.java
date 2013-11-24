@@ -32,7 +32,7 @@ public class Application {
 	// Sender Id - DO NOT CHANGE
 	final String SenderId = "492119277184";
 	
-	private static Application application;
+	protected static Application application;
 	private CommandExecuter ce;
 	private static final int VersionCode = 1;
 	

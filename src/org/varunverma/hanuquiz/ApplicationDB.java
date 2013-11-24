@@ -17,18 +17,18 @@ import android.util.Log;
 
 public class ApplicationDB extends SQLiteOpenHelper{
 
-	private static ApplicationDB appDB;
+	protected static ApplicationDB appDB;
 	
 	static final String SettingsTable = "Settings";
 	static final String QuizTable = "Quiz";
-	static final String QuestionsTable = "Questions";
+	protected static final String QuestionsTable = "Questions";
 	static final String OptionsTable = "Options";
 	static final String AnswersTable = "Answers";
 	static final String QuestionMetaDataTable = "QuestionMetaData";
 	static final String QuizMetaDataTable = "QuizMetaData";
 	static final String MyAnswersTable = "MyAnswers";
 
-	private SQLiteDatabase data_base;
+	protected SQLiteDatabase data_base;
 	
 	static ApplicationDB getInstance(Context context, int dbVersion, String dbName){
 			
@@ -187,7 +187,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 	}
 	
 	protected void openDBForWriting(){
-		data_base = appDB.getWritableDatabase();
+		data_base = getWritableDatabase();
  	}
 
 	synchronized void executeDBTransaction(List<DBContentValues> dbData) throws Exception{
@@ -374,7 +374,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		return list;
 	}
 	
-	private Question buildQuestionObject(Cursor qCursor) {
+	protected Question buildQuestionObject(Cursor qCursor) {
 		
 		Question question = new Question();
 		

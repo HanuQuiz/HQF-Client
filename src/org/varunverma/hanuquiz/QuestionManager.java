@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 
 import android.util.Log;
@@ -12,10 +13,12 @@ public class QuestionManager {
 
 	private static QuestionManager instance;
 	
+	private HashMap<Integer, Question> questionList;
+	
 	ArrayList<Integer> toDownload;
 	ArrayList<Question> toSave;
 	
-	static QuestionManager getInstance(){
+	public static QuestionManager getInstance(){
 		
 		if(instance == null){
 			instance = new QuestionManager();
@@ -25,8 +28,18 @@ public class QuestionManager {
 	}
 	
 	private QuestionManager(){
+		
+		questionList = new HashMap<Integer,Question>();
 		toDownload = new ArrayList<Integer>();
 		toSave = new ArrayList<Question>();
+	}
+	
+	public void clearQuestionList(){
+		questionList.clear();
+	}
+	
+	public void addQuestionToList(Question question){
+		questionList.put(question.getId(), question);
 	}
 	
 	void filterArtifactsForDownload(HashMap<Integer, Date> artifactsList) {
@@ -91,6 +104,15 @@ public class QuestionManager {
 		}
 		
 		return allSuccess;
+	}
+	
+	public List<Question> getQuestionList() {
+		
+		ArrayList<Question> list = new ArrayList<Question>();
+		list.addAll(questionList.values());
+		
+		return list;
+		
 	}
 
 }
