@@ -9,13 +9,20 @@ import android.content.ContentValues;
 
 public class DBContentValues {
 	
+	public DBContentValues(){
+		Content = new ContentValues();
+		dbOperation = DBOperation.INSERT;
+		TableName = "";
+		where = "";
+	}
+	
 	public enum DBOperation {
 		INSERT, UPDATE, DELETE;
 	}
 	
-	DBOperation dbOperation;
-	String TableName;
-	ContentValues Content;
-	String where;
+	public DBOperation dbOperation;
+	public String TableName;
+	public ContentValues Content;
+	public String where;
 
 }

@@ -190,7 +190,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		data_base = getWritableDatabase();
  	}
 
-	synchronized void executeDBTransaction(List<DBContentValues> dbData) throws Exception{
+	protected synchronized void executeDBTransaction(List<DBContentValues> dbData) throws Exception{
 		
 		try{
 			

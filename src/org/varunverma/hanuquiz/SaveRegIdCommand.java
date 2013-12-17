@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -44,6 +45,11 @@ public class SaveRegIdCommand extends Command {
 			String email = accounts[0].name;
 			app.addParameter("EMail", email);
 			
+			// Get the Time Zone
+			TimeZone tz = TimeZone.getDefault();
+			String timeZone = tz.getID();
+			app.addParameter("TimeZone", timeZone);
+			
 			// Create a new HttpClient and Post Header  
 			HttpClient httpclient = new DefaultHttpClient();
 			String url = "http://varunverma.org/HanuGCM/RegisterDevice.php";
@@ -53,6 +59,7 @@ public class SaveRegIdCommand extends Command {
 			nameValuePairs.add(new BasicNameValuePair("package", packageName));
 			nameValuePairs.add(new BasicNameValuePair("regid", regId));
 			nameValuePairs.add(new BasicNameValuePair("email", email));
+			nameValuePairs.add(new BasicNameValuePair("tz", timeZone));
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			
 			//Execute HTTP Post Request  
