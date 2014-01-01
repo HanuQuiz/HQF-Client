@@ -190,7 +190,7 @@ public class ApplicationDB extends SQLiteOpenHelper{
 		data_base = getWritableDatabase();
  	}
 
-	protected synchronized void executeDBTransaction(List<DBContentValues> dbData) throws Exception{
+	public synchronized void executeDBTransaction(List<DBContentValues> dbData) throws Exception{
 		
 		try{
 			
@@ -227,9 +227,9 @@ public class ApplicationDB extends SQLiteOpenHelper{
 			
 		} catch (Exception e) {
 
-		data_base.endTransaction();
+			data_base.endTransaction();
 			throw e;
-			
+
 		}
 		
 	}
