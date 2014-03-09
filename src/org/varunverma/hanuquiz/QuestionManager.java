@@ -114,5 +114,17 @@ public class QuestionManager {
 		return list;
 		
 	}
+	
+	public boolean deleteQuestion(int questionID){
+		
+		boolean success = questionList.get(questionID).delete();
+		
+		if(success){
+			questionList.remove(questionID);
+		}
+		
+		return success;
+		
+	}
 
 }

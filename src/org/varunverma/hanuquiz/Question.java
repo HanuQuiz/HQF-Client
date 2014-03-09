@@ -342,5 +342,57 @@ public class Question {
 		
 		return html;
 	}
+
+	boolean delete() {
+		
+		List<DBContentValues> transactionData = new ArrayList<DBContentValues>();
+		
+		// - Options Table
+		DBContentValues OptionsData = new DBContentValues();
+		OptionsData.TableName = ApplicationDB.OptionsTable;
+		OptionsData.Content = new ContentValues();
+		OptionsData.where = "QuestionId = " + id;
+		
+		OptionsData.dbOperation = DBContentValues.DBOperation.DELETE;
+		transactionData.add(OptionsData);
+		
+		// - Answers Table
+		DBContentValues AnswersData = new DBContentValues();
+		AnswersData.TableName = ApplicationDB.AnswersTable;
+		AnswersData.Content = new ContentValues();
+		AnswersData.where = "QuestionId = " + id;
+				
+		AnswersData.dbOperation = DBContentValues.DBOperation.DELETE;
+		transactionData.add(AnswersData);
+		
+		// - MetaData Table
+		DBContentValues MetaData = new DBContentValues();
+		MetaData.TableName = ApplicationDB.QuestionMetaDataTable;
+		MetaData.Content = new ContentValues();
+		MetaData.where = "QuestionId = " + id;
+				
+		MetaData.dbOperation = DBContentValues.DBOperation.DELETE;
+		transactionData.add(MetaData);
+		
+		// - Question Table
+		DBContentValues QuestionData = new DBContentValues();
+		QuestionData.TableName = ApplicationDB.QuestionMetaDataTable;
+		QuestionData.Content = new ContentValues();
+		QuestionData.where = "QuestionId = " + id;
+
+		QuestionData.dbOperation = DBContentValues.DBOperation.DELETE;
+		transactionData.add(QuestionData);
+
+		try {
+			
+			ApplicationDB Appdb = ApplicationDB.getInstance();
+			Appdb.executeDBTransaction(transactionData);
+			return true;
+
+		} catch (Exception e) {
+			Log.e(Application.TAG, e.getMessage(), e);
+			return false;
+		}
+	}
 	
 }
