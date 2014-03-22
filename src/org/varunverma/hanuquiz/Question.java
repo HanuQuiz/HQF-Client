@@ -376,7 +376,7 @@ public class Question {
 		
 		// - Question Table
 		DBContentValues QuestionData = new DBContentValues();
-		QuestionData.TableName = ApplicationDB.QuestionMetaDataTable;
+		QuestionData.TableName = ApplicationDB.QuestionsTable;
 		QuestionData.Content = new ContentValues();
 		QuestionData.where = "QuestionId = " + id;
 
