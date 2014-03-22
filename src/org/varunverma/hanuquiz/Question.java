@@ -378,7 +378,7 @@ public class Question {
 		DBContentValues QuestionData = new DBContentValues();
 		QuestionData.TableName = ApplicationDB.QuestionsTable;
 		QuestionData.Content = new ContentValues();
-		QuestionData.where = "QuestionId = " + id;
+		QuestionData.where = "ID = " + id;
 
 		QuestionData.dbOperation = DBContentValues.DBOperation.DELETE;
 		transactionData.add(QuestionData);
