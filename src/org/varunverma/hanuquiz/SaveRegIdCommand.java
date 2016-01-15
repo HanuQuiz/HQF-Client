@@ -18,8 +18,6 @@ import org.varunverma.CommandExecuter.Command;
 import org.varunverma.CommandExecuter.Invoker;
 import org.varunverma.CommandExecuter.ResultObject;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.util.Log;
 
 public class SaveRegIdCommand extends Command {
@@ -40,10 +38,7 @@ public class SaveRegIdCommand extends Command {
 			Application app = Application.getApplicationInstance();
 			String packageName = app.context.getPackageName();
 			
-			// Get Primary Email Id
-			Account[] accounts = AccountManager.get(app.context).getAccountsByType("com.google");
-			String email = accounts[0].name;
-			app.addParameter("EMail", email);
+			String iid = app.getSettings().get("InstanceID");
 			
 			// Get the Time Zone
 			TimeZone tz = TimeZone.getDefault();
@@ -52,14 +47,15 @@ public class SaveRegIdCommand extends Command {
 			
 			// Create a new HttpClient and Post Header  
 			HttpClient httpclient = new DefaultHttpClient();
-			String url = "http://varunverma.org/HanuGCM/RegisterDevice.php";
+			String url = "http://apps.ayansh.com/HanuGCM/RegisterDevice.php";
 			HttpPost httppost = new HttpPost(url);
 			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);  
 			nameValuePairs.add(new BasicNameValuePair("package", packageName));
 			nameValuePairs.add(new BasicNameValuePair("regid", regId));
-			nameValuePairs.add(new BasicNameValuePair("email", email));
+			nameValuePairs.add(new BasicNameValuePair("iid", iid));
 			nameValuePairs.add(new BasicNameValuePair("tz", timeZone));
+			nameValuePairs.add(new BasicNameValuePair("app_version", String.valueOf(app.getCurrentAppVersionCode())));
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			
 			//Execute HTTP Post Request  

@@ -53,7 +53,7 @@ public class ValidateApplicationCommand extends Command {
 				
 				// Create a new HttpClient and Post Header  
 				HttpClient httpclient = new DefaultHttpClient();
-				HttpPost httppost = new HttpPost("http://hanu-droid.varunverma.org/Applications/Validate.php");
+				HttpPost httppost = new HttpPost("http://apps.ayansh.com/HanuGCM/Validate.php");
 				
 				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);  
 				nameValuePairs.add(new BasicNameValuePair("blogurl", app.appURL));

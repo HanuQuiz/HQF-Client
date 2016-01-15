@@ -8,6 +8,9 @@ import org.varunverma.CommandExecuter.CommandExecuter;
 import org.varunverma.CommandExecuter.Invoker;
 import org.varunverma.CommandExecuter.MultiCommand;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -16,8 +19,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.DatabaseUtils;
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.google.android.gcm.GCMRegistrar;
 
 /**
  * @author Varun
@@ -29,12 +30,12 @@ public class Application {
 	// Activity Code constants.
 	public static final int EULA = 1;
 	
-	// Sender Id - DO NOT CHANGE
-	final String SenderId = "492119277184";
+	private String SenderId;
 	
 	protected static Application application;
 	private CommandExecuter ce;
-	private static final int VersionCode = 1;
+	private static final int VersionCode = 10;
+	private Tracker tracker;
 	
 	public static String TAG, appName;
 	
@@ -80,6 +81,17 @@ public class Application {
 			
 			// Initialize DB
 			initializeDB();
+			
+			// Sender ID
+			SenderId = getStringFromResource("gcm_sender_id");
+			
+			// Initialize Google Analytics tracker
+			if (tracker == null) {
+				
+	            GoogleAnalytics analytics = GoogleAnalytics.getInstance(context);
+	            int id = context.getResources().getIdentifier("global_tracker", "xml", context.getPackageName());
+	            tracker = analytics.newTracker(id);
+	        }
 		}
 		
 	}
@@ -105,6 +117,13 @@ public class Application {
 		int id = context.getResources().getIdentifier("AppURL", "string", context.getPackageName());
 		appURL = context.getResources().getString(id);
 		
+	}
+	
+	String getStringFromResource(String name){
+		// Get Id of the String Resource.
+		int id = context.getResources().getIdentifier(name, "string", context.getPackageName());
+		// Get Resource by Id
+		return context.getResources().getString(id);
 	}
 	
 	// Add parameter
@@ -189,26 +208,6 @@ public class Application {
 		return Boolean.valueOf(Settings.get("EULA"));
 	}
 
-	public void registerAppForGCM() {
-
-		// Register this app
-		String regId1 = Settings.get("RegistrationId");
-		String regId2 = GCMRegistrar.getRegistrationId(context);
-
-		if (regId1 == null || regId1.contentEquals("") || regId2 == null || regId2.contentEquals("")) {
-			// Application is not registered
-			Log.v(TAG, "Registering app with GCM");
-
-			// Remove parameters
-			removeParameter("RegistrationId");
-			removeParameter("RegistrationStatus");
-
-			// Register
-			GCMRegistrar.register(context, SenderId);
-		}
-		
-	}
-	
 	public boolean isThisFirstUse(){
 		
 		long count = DatabaseUtils.queryNumEntries(appDB.getWritableDatabase(), ApplicationDB.QuestionsTable);
@@ -340,11 +339,13 @@ public class Application {
 
 	public void updateVersion() {
 		
-		// Update Version Since version is updated. We have to register again !
-		addParameter("RegistrationId", ""); // Set Reg Id to space.
-		GCMRegistrar.unregister(context);
-		GCMRegistrar.register(context, SenderId);
-
+		addParameter("HanuVersionCode", String.valueOf(VersionCode));
+		addParameter("AppVersionCode", String.valueOf(getCurrentAppVersionCode()));
+		
+	}
+	
+	protected int getCurrentAppVersionCode(){
+		
 		int version;
 		try {
 			version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
@@ -352,9 +353,11 @@ public class Application {
 			version = 0;
 			Log.e(TAG, e.getMessage(), e);
 		}
-		addParameter("HanuVersionCode", String.valueOf(VersionCode));
-		addParameter("AppVersionCode", String.valueOf(version));
-		
+		return version;
+	}
+	
+	public String getSenderId() {
+		return SenderId;
 	}
 
 }

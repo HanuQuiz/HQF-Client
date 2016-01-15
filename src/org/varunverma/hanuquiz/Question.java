@@ -170,7 +170,7 @@ public class Question {
 		transactionData.add(QuestionData);
 
 		// -- Save Options Table --
-		Iterator iter_options = options.keySet().iterator();
+		Iterator<Integer> iter_options = options.keySet().iterator();
 
 		while (iter_options.hasNext()) {
 			
@@ -190,7 +190,7 @@ public class Question {
 		}
 
 		// -- Save Answers Table --
-		Iterator iter_ans = answers.iterator();
+		Iterator<Integer> iter_ans = answers.iterator();
 
 		while (iter_ans.hasNext()) {
 			
@@ -208,7 +208,7 @@ public class Question {
 
 		// -- Save Tags (Metadata) --
 		
-		Iterator iter_tag = tags.iterator();
+		Iterator<String> iter_tag = tags.iterator();
 
 		while (iter_tag.hasNext()) {
 			

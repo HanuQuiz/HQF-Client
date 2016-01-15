@@ -39,7 +39,7 @@ public class DeleteRegIdCommand extends Command {
 			
 			// Create a new HttpClient and Post Header  
 			HttpClient httpclient = new DefaultHttpClient();
-			String url = "http://varunverma.org/HanuGCM/UnRegisterDevice.php";
+			String url = "http://apps.ayansh.com/HanuGCM/UnRegisterDevice.php";
 			HttpPost httppost = new HttpPost(url);
 			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);  

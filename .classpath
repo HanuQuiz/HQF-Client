@@ -3,8 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="libs/CommandExecuter.jar"/>
-	<classpathentry kind="lib" path="libs/gcm.jar"/>
-	<classpathentry kind="lib" path="libs/libGoogleAnalyticsV2.jar"/>
-	<classpathentry kind="lib" path="libs/android.jar"/>
+	<classpathentry kind="lib" path="C:/Users/I041474/Documents/Project_Works/Android_Development/ADT/sdk/platforms/android-14/android.jar"/>
+	<classpathentry kind="lib" path="C:/Users/I041474/AppData/Local/Android/sdk/extras/google/google_play_services/libproject/google-play-services_lib/libs/google-play-services.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
